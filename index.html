@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MeshekOS — יסודות הממשק</title>
+<meta name="description" content="אבות טיפוס לממשק MeshekOS: מערכת הפעלה לממשל קהילתי, עברית-ראשונה.">
+<link rel="stylesheet" href="ds/broadsheet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Source+Code+Pro:wght@400;600&display=swap">
+<style>
+:root{
+  --font-body:"Frank Ruhl Libre","Source Serif 4",serif;
+  --font-heading:"Frank Ruhl Libre","Source Serif 4",serif;
+  --font-heading-weight:700;
+  --font-mono:"Source Code Pro",ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:var(--font-body);margin:0;background:var(--color-bg);color:var(--color-text);min-height:100vh}
+
+.page{max-width:900px;padding:64px 40px 120px;margin-inline-start:0;margin-inline-end:auto}
+
+.logo{display:block;width:220px;height:auto;margin-bottom:16px;border-radius:8px}
+
+.eyebrow{font-size:11px;letter-spacing:0.14em;color:var(--color-accent-700);margin-bottom:8px}
+h1{font-family:var(--font-heading);font-size:48px;font-weight:700;margin:0 0 12px;max-width:18ch;line-height:1.15}
+.subtitle{font-size:18px;color:var(--color-neutral-800);max-width:52ch;margin:0 0 40px;text-wrap:pretty;line-height:1.6}
+
+.divider-thick{height:3px;background:var(--color-text);margin-bottom:3px}
+.divider-thin{height:1px;background:var(--color-text);margin-bottom:48px}
+
+.section-label{font-size:11px;letter-spacing:0.12em;color:var(--color-accent-700);margin-bottom:12px}
+h2{font-family:var(--font-heading);font-size:28px;font-weight:700;margin:0 0 20px;max-width:24ch}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:56px}
+
+.card{
+  display:flex;flex-direction:column;gap:10px;
+  padding:28px 24px;background:var(--color-neutral-100);
+  text-decoration:none;color:inherit;
+  border-radius:2px;
+  transition:background 0.15s ease,box-shadow 0.15s ease;
+}
+.card:hover{background:var(--color-neutral-200);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.card-tag{font-size:11px;letter-spacing:0.1em;color:var(--color-accent-700)}
+.card-title{font-size:22px;font-weight:700;font-family:var(--font-heading)}
+.card-desc{font-size:13px;color:var(--color-neutral-800);line-height:1.55}
+.card-link{font-size:12px;color:var(--color-accent-700);margin-top:auto}
+
+.docs{margin-top:8px}
+.docs h2{margin-bottom:12px}
+.doc-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.doc-list a{font-size:14px;color:var(--color-accent-700);text-decoration:none;display:flex;align-items:center;gap:8px}
+.doc-list a:hover{color:var(--color-accent-800);text-decoration:underline}
+.doc-list .ext{font-family:var(--font-mono);font-size:11px;color:var(--color-neutral-600);background:var(--color-neutral-200);padding:2px 6px;border-radius:2px}
+
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--color-divider);font-size:12px;color:var(--color-neutral-600)}
+footer a{color:var(--color-accent-700);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media (max-width:600px){
+  .page{padding:32px 20px 80px}
+  h1{font-size:32px}
+  .cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <img src="assets/meshekos-logo.png" alt="MeshekOS" class="logo">
+
+  <div class="eyebrow">MESHEKOS · M-UX</div>
+  <h1>יסודות הממשק</h1>
+  <p class="subtitle">אבות טיפוס לממשק המשתמש של MeshekOS — מערכת הפעלה לממשל קהילתי. עברית-ראשונה, מבוססת מערכת העיצוב Broadsheet ו-Vibe Tokens.</p>
+  <div class="divider-thick"></div>
+  <div class="divider-thin"></div>
+
+  <div class="section-label">מסכים</div>
+  <h2>אבות טיפוס פעילים</h2>
+
+  <div class="cards">
+
+    <a href="MeshekOS%20Foundation%20Brief.dc.html" class="card">
+      <span class="card-tag">מסמך יסוד</span>
+      <span class="card-title">יסודות הממשק</span>
+      <span class="card-desc">ארכיטקטורת מידע, כיוונים חזותיים, מלאי רכיבים, מטריצת מסכים ומצבים, והנחות שטרם אושרו.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="MeshekOS%20Board%20v3.dc.html" class="card">
+      <span class="card-tag">לוח בקרה</span>
+      <span class="card-title">לוח סקירה v3</span>
+      <span class="card-desc">תצוגת בורד: שורות מקובצות מתקפלות, תאי סטטוס צבעוניים, עמודת צ׳קבוקס, סיכום סוללה, שורת הוספה.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="MeshekOS%20Meetings.dc.html" class="card">
+      <span class="card-tag">ישיבות</span>
+      <span class="card-title">ישיבות ופרוטוקולים</span>
+      <span class="card-desc">ניהול ישיבות, סדר יום, והפקת פרוטוקולים מובנים.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="MeshekOS%20Review%20Split.dc.html" class="card">
+      <span class="card-tag">סקירה</span>
+      <span class="card-title">סקירה מפוצלת</span>
+      <span class="card-desc">מקור מול טיוטה: סקירת שינויים עם הודעת התנגשות ושער חיוב-נימוק.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="MeshekOS%20Governed%20Form.dc.html" class="card">
+      <span class="card-tag">טפסים</span>
+      <span class="card-title">טופס ממשל</span>
+      <span class="card-desc">טופס ממשלי עם ולידציה, שדות מורכבים, ושורת פעולה אסינכרונית.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="MeshekOS%20Auth.dc.html" class="card">
+      <span class="card-tag">הזדהות</span>
+      <span class="card-title">מסכי כניסה</span>
+      <span class="card-desc">מסכי הזדהות: כניסה, אימות דו-שלבי, ומצבי שגיאה.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+    <a href="Rail.dc.html" class="card">
+      <span class="card-tag">ניווט</span>
+      <span class="card-title">מסילת ניווט</span>
+      <span class="card-desc">מסילת ניווט ראשי עם בורר גוף פעיל, התראות, ופרופיל משתמש.</span>
+      <span class="card-link">פתיחה ←</span>
+    </a>
+
+  </div>
+
+  <div class="docs">
+    <div class="section-label">תיעוד</div>
+    <h2>מסמכי מוצר וטכניקה</h2>
+    <ul class="doc-list">
+      <li><a href="docs/Product_Spec.md"><span class="ext">MD</span> מפרט מוצר — MeshekOS Pilot</a></li>
+      <li><a href="docs/Technical_Design.md"><span class="ext">MD</span> עיצוב טכני</a></li>
+      <li><a href="docs/MeshekOS_Tasks_Final.md"><span class="ext">MD</span> משימות ליישום</a></li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>MeshekOS — מערכת הפעלה לממשל קהילתי · <a href="https://github.com/nitayg/meshekos-design">קוד מקור ב-GitHub</a></p>
+  </footer>
+
+</div>
+
+</body>
+</html>
