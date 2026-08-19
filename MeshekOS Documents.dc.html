@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--allgrey-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+input[type="checkbox"]:focus-visible + span{outline:2px solid var(--primary-color);outline-offset:2px}
+input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color) !important;border-color:transparent !important}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--allgrey-background-color);display:grid;grid-template-columns:88px minmax(0,1fr);align-items:start">
+  <dc-import name="Rail" current="docs" hint-size="88px,100vh"></dc-import>
+
+  <div style="min-width:0">
+
+    <header style="background:var(--primary-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-12) var(--space-24) 0;display:flex;flex-direction:column;gap:var(--space-12)">
+      <div style="display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+        <div>
+          <h1 style="font:var(--font-h3-bold)">מסמכים וידע</h1>
+          <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">מצב המסמך והפעלתו במאגר הידע הם שני דברים נפרדים</div>
+        </div>
+        <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-8)">
+          <label for="body-switch" style="font:var(--font-text2-normal);color:var(--secondary-text-color)">גוף</label>
+          <select id="body-switch" value="{{ bodyFilter }}" onChange="{{ onBody }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+            <option value="">כל הגופים</option>
+            <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="4">
+              <option value="{{ b }}">{{ b }}</option>
+            </sc-for>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:var(--space-16)">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{ t.onPick }}" aria-current="{{ t.current }}" style="background:transparent;border:0;border-bottom:2px solid {{ t.underline }};margin-bottom:-1px;padding:var(--space-8) var(--space-4);font:{{ t.font }};color:{{ t.color }};cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-4)">
+            <span>{{ t.label }}</span>
+            <sc-if value="{{ t.showCount }}" hint-placeholder-val="{{ false }}">
+              <span dir="ltr" style="unicode-bidi:isolate;display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--space-4);border-radius:var(--border-radius-4);background:var(--ui-background-color);color:var(--secondary-text-color);font:var(--font-text3-normal);font-variant-numeric:tabular-nums">{{ t.count }}</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+    </header>
+
+    <main style="padding:var(--space-20) var(--space-24) var(--space-64);min-width:0">
+
+      <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-16)">
+            <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="חיפוש מילולי בכל המסמכים" aria-label="חיפוש מילולי" style="width:260px;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+            <select aria-label="סוג מסמך" value="{{ typeFilter }}" onChange="{{ onType }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+              <option value="">כל הסוגים</option>
+              <sc-for list="{{ types }}" as="ty" hint-placeholder-count="5">
+                <option value="{{ ty }}">{{ ty }}</option>
+              </sc-for>
+            </select>
+            <select aria-label="מצב מסמך" value="{{ stateFilter }}" onChange="{{ onState }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+              <option value="">כל המצבים</option>
+              <sc-for list="{{ states }}" as="st" hint-placeholder-count="5">
+                <option value="{{ st }}">{{ st }}</option>
+              </sc-for>
+            </select>
+            <label style="position:relative;display:flex;align-items:center;font:var(--font-text2-normal);cursor:pointer">
+              <input type="checkbox" checked="{{ activeOnly }}" onChange="{{ onActiveOnly }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
+              <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ activeOnlyBorder }};border-radius:2px;background:{{ activeOnlyBg }};display:flex;align-items:center;justify-content:center;overflow:hidden">
+                <svg viewBox="0 0 20 20" fill="none" style="width:100%;visibility:{{ activeOnlyCheck }};color:var(--text-color-on-primary)"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path></svg>
+              </span>
+              <span style="margin-inline-start:var(--space-8);user-select:none">רק במאגר הידע</span>
+            </label>
+            <span style="margin-inline-start:auto;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ resultLabel }}</span>
+          </div>
+
+          <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);overflow-x:auto">
+            <div style="display:flex;min-width:1010px;border-bottom:1px solid var(--layout-border-color);font:var(--font-text2-normal);color:var(--secondary-text-color)">
+              <div style="flex:1;min-width:250px;padding:var(--space-8) var(--space-16)">מסמך</div>
+              <div style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">סוג</div>
+              <div style="width:140px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">גוף</div>
+              <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב המסמך</div>
+              <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מאגר הידע</div>
+              <div style="width:100px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">תאריך</div>
+              <div style="width:60px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)"></div>
+            </div>
+
+            <sc-for list="{{ docs }}" as="d" hint-placeholder-count="6">
+              <div style="border-bottom:1px solid var(--layout-border-color)">
+                <div style="display:flex;min-width:1010px;align-items:stretch;min-height:44px" style-hover="background:var(--allgrey-background-color)">
+                  <div style="flex:1;min-width:250px;padding:var(--space-8) var(--space-16);display:flex;flex-direction:column;justify-content:center;gap:2px;align-items:flex-start">
+                    <span style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                      <a href="#" style="font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="color:var(--primary-color)">{{ d.title }}</a>
+                      <sc-if value="{{ d.uncertainStatus }}" hint-placeholder-val="{{ false }}">
+                        <span title="מצב המסמך אינו ודאי" style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:var(--warning-color);color:var(--fixed-dark-color);font:var(--font-text3-normal)">מצב לא ודאי</span>
+                      </sc-if>
+                    </span>
+                    <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ d.ref }}</span>
+                  </div>
+                  <div style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;font:var(--font-text2-normal)">{{ d.type }}</div>
+                  <div style="width:140px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ d.body }}</div>
+                  <div style="width:170px;flex:none;background:{{ d.stateBg }};color:{{ d.stateFg }};display:grid;place-items:center;text-align:center;font:var(--font-text2-normal);padding:var(--space-4)">{{ d.stateLabel }}</div>
+                  <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4);text-align:center">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ d.kbBg }};color:{{ d.kbFg }};font:var(--font-text2-normal)">{{ d.kbLabel }}</span>
+                  </div>
+                  <div dir="ltr" style="width:100px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ d.date }}</div>
+                  <div style="width:60px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center">
+                    <button type="button" onClick="{{ d.onToggle }}" aria-expanded="{{ d.open }}" style="background:transparent;color:var(--primary-color);border:0;border-radius:var(--border-radius-small);height:24px;padding:0 var(--space-4);font:var(--font-text2-normal);cursor:pointer" style-hover="background:var(--primary-background-hover-color)">{{ d.toggleLabel }}</button>
+                  </div>
+                </div>
+
+                <sc-if value="{{ d.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:var(--allgrey-background-color);border-top:1px solid var(--layout-border-color);padding:var(--space-16) var(--space-24);display:flex;gap:var(--space-24);flex-wrap:wrap">
+
+                    <sc-if value="{{ d.hasSuggestion }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1;min-width:min(100%,340px);background:var(--primary-background-color);border:1px solid var(--primary-color);border-radius:var(--border-radius-8);padding:var(--space-12)">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--primary-color);color:var(--fixed-light-color);font:var(--font-text2-normal);margin-bottom:var(--space-8)">יחס החלפה מוצע</span>
+                        <p style="margin:0 0 var(--space-8);font:var(--font-text2-normal)">{{ d.suggestionText }}</p>
+                        <p style="margin:0 0 var(--space-12);font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ d.suggestionWhy }}</p>
+                        <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+                          <button type="button" onClick="{{ d.onAcceptSuggestion }}" style="background:transparent;color:var(--positive-color);border:1px solid var(--positive-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--positive-color-selected)">אישור היחס</button>
+                          <button type="button" onClick="{{ d.onRejectSuggestion }}" style="background:transparent;color:var(--negative-color);border:1px solid var(--negative-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--negative-color-selected)">דחייה</button>
+                        </div>
+                        <p style="margin:var(--space-8) 0 0;font:var(--font-text3-normal);color:var(--secondary-text-color)">המערכת אינה משנה מצב של מסמך רשמי מהסקה בלבד.</p>
+                      </div>
+                    </sc-if>
+
+                    <div style="flex:1;min-width:min(100%,340px)">
+                      <h3 style="font:var(--font-text1-medium);margin-bottom:var(--space-8)">שינוי מצב ידני</h3>
+                      <div style="display:flex;flex-direction:column;gap:var(--space-8);max-width:420px">
+                        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                          <label for="{{ d.stateSelId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">מצב חדש</label>
+                          <select id="{{ d.stateSelId }}" value="{{ d.newState }}" onChange="{{ d.onNewState }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                            <option value="">— בחרי מצב —</option>
+                            <sc-for list="{{ terminalStates }}" as="ts" hint-placeholder-count="4">
+                              <option value="{{ ts }}">{{ ts }}</option>
+                            </sc-for>
+                          </select>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                          <label for="{{ d.reasonId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">נימוק</label>
+                          <input id="{{ d.reasonId }}" type="text" value="{{ d.reason }}" onChange="{{ d.onReason }}" placeholder="חובה" aria-invalid="{{ d.reasonInvalid }}" style="background:var(--secondary-background-color);border:1px solid {{ d.reasonBorder }};border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:{{ d.reasonBorder }}" style-focus="border-color:{{ d.reasonBorderFocus }}">
+                        </div>
+                        <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+                          <div style="display:flex;flex-direction:column;gap:var(--space-4);flex:1;min-width:150px">
+                            <label for="{{ d.dateId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">מועד תחילה</label>
+                            <input id="{{ d.dateId }}" type="text" dir="ltr" value="{{ d.effDate }}" onChange="{{ d.onEffDate }}" placeholder="dd.mm.yyyy" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);font-family:ui-monospace,monospace;color:var(--primary-text-color);unicode-bidi:isolate" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                          </div>
+                          <div style="display:flex;flex-direction:column;gap:var(--space-4);flex:1;min-width:150px">
+                            <label for="{{ d.scopeId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">היקף</label>
+                            <select id="{{ d.scopeId }}" value="{{ d.scope }}" onChange="{{ d.onScope }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                              <option value="המסמך כולו">המסמך כולו</option>
+                              <option value="סעיפים מסוימים">סעיפים מסוימים</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                          <button type="button" disabled="{{ d.applyDisabled }}" onClick="{{ d.onApply }}" style="background:{{ d.applyBg }};color:{{ d.applyFg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:{{ d.applyCursor }}">רישום שינוי המצב</button>
+                          <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ d.applyHint }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ registerEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:var(--space-16);background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-32);text-align:center">
+              <h3 style="font:var(--font-h3-bold);margin-bottom:var(--space-8)">אין מסמכים שעונים על הסינון</h3>
+              <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 auto var(--space-16);max-width:52ch">חיפוש מילולי זמין על כל המסמכים שיש לך הרשאה לראות, גם אם אינם מופעלים במאגר הידע.</p>
+              <button type="button" onClick="{{ onClearFilters }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">ניקוי הסינון</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isImport }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:var(--space-20);align-items:flex-start;flex-wrap:wrap">
+          <div style="flex:1;min-width:min(100%,520px);background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-20) var(--space-24)">
+            <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-4)">
+              <h2 style="font:var(--font-h3-bold)">אימות ייבוא היסטורי</h2>
+              <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ importRef }}</span>
+            </div>
+            <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-20);max-width:64ch">הצעות ה-AI הן ייעוץ בלבד. עד לאימות אדם המסמך מוגבל ואינו מופעל. שדה שלא ניתן לאמת נשמר כ״לא ידוע״ ואינו מומצא.</p>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-16)">
+              <sc-for list="{{ importFields }}" as="f" hint-placeholder-count="7">
+                <div style="display:flex;gap:var(--space-12);align-items:flex-start;flex-wrap:wrap">
+                  <div style="width:130px;flex:none;font:var(--font-text2-normal);color:var(--secondary-text-color);padding-block:2px">{{ f.label }}</div>
+                  <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:var(--space-4)">
+                    <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                      <sc-if value="{{ f.unknown }}" hint-placeholder-val="{{ false }}">
+                        <span style="font:var(--font-text2-normal);color:var(--secondary-text-color)">לא ידוע</span>
+                      </sc-if>
+                      <sc-if value="{{ f.known }}" hint-placeholder-val="{{ true }}">
+                        <input type="text" value="{{ f.value }}" onChange="{{ f.onChange }}" dir="{{ f.dir }}" aria-label="{{ f.label }}" style="flex:1;min-width:180px;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);font-family:{{ f.fontFamily }};color:var(--primary-text-color);unicode-bidi:isolate" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                      </sc-if>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ f.badgeBg }};color:{{ f.badgeFg }};font:var(--font-text3-normal)">{{ f.badge }}</span>
+                      <button type="button" onClick="{{ f.onConfirm }}" style="background:transparent;color:{{ f.confirmColor }};border:1px solid {{ f.confirmColor }};border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer">{{ f.confirmLabel }}</button>
+                      <button type="button" onClick="{{ f.onUnknown }}" style="background:transparent;color:var(--secondary-text-color);border:0;border-radius:var(--border-radius-small);height:24px;padding:0 var(--space-4);font:var(--font-text2-normal);cursor:pointer" style-hover="color:var(--primary-text-color)">{{ f.unknownLabel }}</button>
+                    </div>
+                    <sc-if value="{{ f.hasSource }}" hint-placeholder-val="{{ false }}">
+                      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ f.source }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <aside style="width:320px;flex:none;display:flex;flex-direction:column;gap:var(--space-12)">
+            <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16)">
+              <h3 style="font:var(--font-text1-medium);margin-bottom:var(--space-4)">הרשאות וזכאות</h3>
+              <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0 0 var(--space-12)">הרשאת קריאה וזכאות לשליחה חיצונית הן שתי החלטות נפרדות.</p>
+
+              <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                  <label for="access-sel" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">היקף גישה</label>
+                  <select id="access-sel" value="{{ access }}" onChange="{{ onAccess }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                    <option value="">— מוגבל עד לאישור —</option>
+                    <option value="חברי הגוף">חברי הגוף</option>
+                    <option value="כל חברי הקהילה">כל חברי הקהילה</option>
+                    <option value="הנהלה בלבד">הנהלה בלבד</option>
+                  </select>
+                </div>
+
+                <label style="position:relative;display:flex;align-items:center;font:var(--font-text2-normal);cursor:pointer">
+                  <input type="checkbox" checked="{{ aiEligible }}" onChange="{{ onAiEligible }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
+                  <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ aiBorder }};border-radius:2px;background:{{ aiBg }};display:flex;align-items:center;justify-content:center;overflow:hidden">
+                    <svg viewBox="0 0 20 20" fill="none" style="width:100%;visibility:{{ aiCheck }};color:var(--text-color-on-primary)"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path></svg>
+                  </span>
+                  <span style="margin-inline-start:var(--space-8);user-select:none">זכאי לשליחה לספק ולמענה MeshekAI</span>
+                </label>
+
+                <div style="border-top:1px solid var(--layout-border-color);padding-top:var(--space-12)">
+                  <div style="display:flex;align-items:center;gap:var(--space-8);margin-bottom:var(--space-8)">
+                    <span style="font:var(--font-text2-normal)">מצב נוכחי</span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ activationBg }};color:{{ activationFg }};font:var(--font-text2-normal)">{{ activationLabel }}</span>
+                  </div>
+                  <button type="button" disabled="{{ activateDisabled }}" onClick="{{ onActivate }}" style="width:100%;background:{{ activateBg }};color:{{ activateFg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:{{ activateCursor }}">הפעלה במאגר הידע</button>
+                  <p style="margin:var(--space-8) 0 0;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ activateHint }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:var(--primary-background-color);border:1px solid var(--warning-color);border-radius:var(--border-radius-8);padding:var(--space-16)">
+              <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--warning-color);color:var(--fixed-dark-color);font:var(--font-text2-normal);margin-bottom:var(--space-8)">כפילות אפשרית</span>
+              <p style="margin:0 0 var(--space-8);font:var(--font-text2-normal)">נוהל שימוש באולם — גרסה 2 ‏(DOC-2019-0044) דומה ב-91% לפי כותרת וגוף.</p>
+              <p style="margin:0;font:var(--font-text3-normal);color:var(--secondary-text-color)">סימון ככפילות אינו מוחק את המקור ואינו משנה את מצבו.</p>
+            </div>
+          </aside>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isQa }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:860px">
+          <h2 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold);margin-bottom:var(--space-4)">שאל את MeshekAI</h2>
+          <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-16);max-width:70ch">המענה נשען רק על מסמכים מאושרים או מופעלים במפורש שיש לך הרשאה לראות. כל תשובה מגיעה עם ציטוט, גוף ותאריך, וסימון אם המקור הוחלף.</p>
+
+          <div style="display:flex;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-16)">
+            <input type="text" value="{{ question }}" onChange="{{ onQuestion }}" placeholder="מה התעריף לשימוש באולם לחבר קהילה?" aria-label="שאלה" style="flex:1;min-width:280px;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+            <button type="button" onClick="{{ onAsk }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">שאלי</button>
+          </div>
+
+          <div style="display:flex;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-20)">
+            <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="3">
+              <button type="button" onClick="{{ ex.onPick }}" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">{{ ex.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ hasAnswer }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-20)">
+              <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-12)">
+                <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ answerBadgeBg }};color:{{ answerBadgeFg }};font:var(--font-text2-normal)">{{ answerBadge }}</span>
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ answerScope }}</span>
+              </div>
+
+              <p style="margin:0 0 var(--space-16);font:var(--font-text1-normal);line-height:26px;max-width:70ch;text-wrap:pretty">{{ answerText }}</p>
+
+              <sc-if value="{{ hasConflict }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--warning-color);color:var(--fixed-dark-color);border-radius:var(--border-radius-8);padding:var(--space-12);margin-bottom:var(--space-16)">
+                  <b style="font-weight:600">המקורות סותרים.</b> {{ conflictText }}
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ hasCitations }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <h3 style="font:var(--font-text2-medium);margin-bottom:var(--space-8)">מקורות</h3>
+                  <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+                    <sc-for list="{{ citations }}" as="c" hint-placeholder-count="2">
+                      <div style="border-inline-start:2px solid {{ c.bar }};padding-inline-start:var(--space-12);display:flex;flex-direction:column;gap:2px">
+                        <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                          <a href="#" style="font:var(--font-text2-normal)">{{ c.title }}</a>
+                          <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ c.stateBg }};color:{{ c.stateFg }};font:var(--font-text3-normal)">{{ c.state }}</span>
+                        </div>
+                        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ c.body }} · <span dir="ltr" style="unicode-bidi:isolate;font-variant-numeric:tabular-nums">{{ c.date }}</span> · {{ c.locator }}</span>
+                        <span style="font:var(--font-text2-normal);color:var(--secondary-text-color)">״{{ c.quote }}״</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940}}">
+const MONO = "ui-monospace, monospace";
+
+// Spec §7.9: five lifecycle states + four terminal statuses
+const STATE = {
+  "טיוטה":            {bg:"var(--color-working_orange)", fg:"#323338"},
+  "מאושר · רשמי":     {bg:"var(--positive-color)",       fg:"#ffffff"},
+  "ממתין לעיבוד":     {bg:"var(--color-navy)",           fg:"#ffffff"},
+  "הוחלף":            {bg:"var(--color-american_gray)",  fg:"#ffffff"},
+  "בארכיון":          {bg:"var(--color-explosive)",      fg:"#323338"},
+  "בוטל":             {bg:"var(--color-stuck-red)",      fg:"#ffffff"},
+  "תוקן חלקית":       {bg:"var(--color-dark_purple)",    fg:"#ffffff"}
+};
+const TERMINAL = ["הוחלף","בארכיון","בוטל","תוקן חלקית"];
+
+const KB = {
+  active:   {label:"מופעל", bg:"var(--positive-color-selected)", fg:"#0b3d24"},
+  inactive: {label:"לא מופעל", bg:"var(--ui-background-color)", fg:"var(--secondary-text-color)"},
+  blocked:  {label:"מוגבל עד לאישור", bg:"var(--negative-color-selected)", fg:"#7a1424"}
+};
+
+const DOCS = [
+  {ref:"DOC-2026-0112", title:"תקנון הקהילה — נוסח מעודכן", type:"תקנון", body:"הנהלת הקהילה", date:"04.2026", state:"מאושר · רשמי", kb:"active"},
+  {ref:"DOC-2026-0104", title:"נוהל שימוש באולם הרב־תכליתי", type:"נוהל", body:"הנהלת הקהילה", date:"02.2026", state:"מאושר · רשמי", kb:"active",
+   suggestion:"מסמך זה מחליף את ״נוהל שימוש באולם — גרסה 2״ (DOC-2019-0044).",
+   why:"הוצע לפי סוג מסמך זהה, אותו גוף, דמיון כותרת 91%, ומועד תחילה מאוחר יותר."},
+  {ref:"DOC-2025-0402", title:"תעריפי שימוש באולם", type:"החלטה", body:"הנהלת הקהילה", date:"11.2025", state:"מאושר · רשמי", kb:"active", uncertain:true},
+  {ref:"DOC-2026-0121", title:"הסכם תחזוקת הבריכה", type:"חוזה", body:"ועדת תשתיות", date:"08.2026", state:"טיוטה", kb:"inactive"},
+  {ref:"DOC-2019-0044", title:"נוהל שימוש באולם — גרסה 2", type:"נוהל", body:"הנהלת הקהילה", date:"07.2019", state:"הוחלף", kb:"active"},
+  {ref:"DOC-2018-0011", title:"פרוטוקול אסיפה כללית 3/2018", type:"פרוטוקול", body:"אסיפה כללית", date:"05.2018", state:"בארכיון", kb:"inactive"},
+  {ref:"IMP-2026-0007", title:"החלטות ועדת חינוך 2014–2016 (סרוק)", type:"פרוטוקול", body:"ועדת חינוך", date:"לא ידוע", state:"ממתין לעיבוד", kb:"blocked"}
+];
+
+// Spec §7.8: AI suggests, a human validates; unknown is preserved, never invented
+const IMPORT_FIELDS = [
+  {key:"title", label:"כותרת", ai:"החלטות ועדת חינוך 2014–2016", source:"נגזר מעמוד השער"},
+  {key:"type", label:"סוג מסמך", ai:"פרוטוקול", source:"סווג לפי מבנה הטקסט"},
+  {key:"date", label:"תאריך", ai:"", source:"לא נמצא תאריך בגוף המסמך", startUnknown:true},
+  {key:"body", label:"גוף", ai:"ועדת חינוך", source:"נגזר מכותרת עליונה חוזרת"},
+  {key:"meeting", label:"מזהה ישיבה", ai:"", dir:"ltr", mono:true, source:"אין הפניה לישיבה", startUnknown:true},
+  {key:"people", label:"נוכחים", ai:"נועה שחר, רותי כספי, עמית שדה", source:"זוהו שלושה שמות מתוך רשימה חלקית"},
+  {key:"period", label:"תקופת תוקף", ai:"2014–2016", dir:"ltr", source:"נגזר מטווח התאריכים בגוף"},
+  {key:"sensitivity", label:"רגישות", ai:"רגיל", source:"לא זוהה תוכן אישי"}
+];
+
+const QA = {
+  hall: {
+    badge:"נמצאה תשובה", badgeBg:"var(--positive-color)", badgeFg:"#ffffff",
+    scope:"מבוסס על שני מקורות מאושרים · הנהלת הקהילה",
+    text:"התעריף לחבר קהילה הוא ₪120 לאירוע, לפי החלטת ההנהלה מנובמבר 2025. הנוהל שאושר בפברואר 2026 קובע שהתעריף כולל ניקיון אך לא אבטחה. שימו לב שהחלטת התעריפים סומנה כמצב לא ודאי — תוקפה הוגדר עד סוף 2025 והיא טרם חודשה.",
+    conflict:"", citations:[
+      {title:"נוהל שימוש באולם הרב־תכליתי", body:"הנהלת הקהילה", date:"02.2026", locator:"סעיף 4", state:"פעיל", quote:"התעריף כולל ניקיון בלבד; אבטחה מחויבת בנפרד", active:true},
+      {title:"תעריפי שימוש באולם", body:"הנהלת הקהילה", date:"11.2025", locator:"סעיף 2", state:"מצב לא ודאי", quote:"תעריף לחבר קהילה — ₪120 לאירוע", active:true, uncertain:true}
+    ]
+  },
+  pool: {
+    badge:"המקורות סותרים", badgeBg:"var(--warning-color)", badgeFg:"var(--fixed-dark-color)",
+    scope:"מבוסס על שני מקורות · ועדת תשתיות",
+    text:"לגבי תקופת ההתקשרות בהסכם תחזוקת הבריכה יש שתי גרסאות שאינן מתיישבות זו עם זו, ולכן לא ניתן לקבוע תשובה אחת.",
+    conflict:"בפרוטוקול הוועדה נרשמו 36 חודשים, ובטיוטת ההחלטה נרשמו 24 חודשים. ההכרעה בפער נמצאת בתור הסקירה.",
+    citations:[
+      {title:"פרוטוקול ועדת תשתיות 5/2026", body:"ועדת תשתיות", date:"08.2026", locator:"סעיף 3", state:"פעיל", quote:"ההסכם אושר לתקופה של 36 חודשים", active:true},
+      {title:"הסכם תחזוקת הבריכה", body:"ועדת תשתיות", date:"08.2026", locator:"טיוטה", state:"טיוטה", quote:"תקופת התקשרות — 24 חודשים", active:false}
+    ]
+  },
+  salary: {
+    badge:"אין די מקורות", badgeBg:"var(--color-american_gray)", badgeFg:"#ffffff",
+    scope:"לא נמצאו מקורות מאושרים שיש לך הרשאה לראות",
+    text:"אין במאגר מסמך מאושר או מופעל שעונה על השאלה הזאת. ייתכן שהמידע קיים במסמך שאינו מופעל במאגר הידע, או בגוף שאין לך בו הרשאת קריאה. המערכת אינה משלימה תשובה ממקורות שאינם זכאים.",
+    conflict:"", citations:[]
+  }
+};
+
+class Component extends DCLogic {
+  state = {
+    tab:"register", q:"", bodyFilter:"", typeFilter:"", stateFilter:"", activeOnly:false,
+    openRef:null, rowState:{}, rowReason:{}, rowDate:{}, rowScope:{}, applied:{}, suggestionResolved:{},
+    importValues:{}, importUnknown:{}, importConfirmed:{}, access:"", aiEligible:false, activated:false,
+    question:"", answer:null
+  };
+
+  docState(d) { return this.state.applied[d.ref] || d.state; }
+
+  visibleDocs() {
+    const s = this.state;
+    return DOCS.filter(d => {
+      if (s.bodyFilter && d.body !== s.bodyFilter) return false;
+      if (s.typeFilter && d.type !== s.typeFilter) return false;
+      if (s.stateFilter && this.docState(d) !== s.stateFilter) return false;
+      if (s.activeOnly && d.kb !== "active") return false;
+      if (s.q.trim()) {
+        const hay = (d.title + " " + d.ref + " " + d.type + " " + d.body).toLowerCase();
+        if (hay.indexOf(s.q.trim().toLowerCase()) === -1) return false;
+      }
+      return true;
+    }).sort((a, b) => {
+      const at = TERMINAL.indexOf(this.docState(a)) !== -1 ? 1 : 0;
+      const bt = TERMINAL.indexOf(this.docState(b)) !== -1 ? 1 : 0;
+      return at - bt;
+    });
+  }
+
+  cb(on) {
+    return {
+      check: on ? "visible" : "hidden",
+      border: on ? "transparent" : "var(--ui-border-color)",
+      bg: on ? "var(--primary-color)" : "var(--secondary-background-color)"
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const docs = this.visibleDocs();
+    const ao = this.cb(s.activeOnly);
+    const ai = this.cb(s.aiEligible);
+
+    const importDone = IMPORT_FIELDS.every(f => s.importConfirmed[f.key] || s.importUnknown[f.key] !== undefined);
+    const canActivate = !!s.access && !s.activated && importDone;
+
+    const tabDefs = [
+      {id:"register", label:"מרשם המסמכים", count:DOCS.length},
+      {id:"import", label:"אימות ייבוא היסטורי", count:IMPORT_FIELDS.length},
+      {id:"qa", label:"MeshekAI", count:0}
+    ];
+
+    return {
+      tabs: tabDefs.map(t => ({
+        label: t.label, count: String(t.count), showCount: t.count > 0,
+        current: s.tab === t.id ? "true" : null,
+        underline: s.tab === t.id ? "var(--primary-color)" : "transparent",
+        color: s.tab === t.id ? "var(--primary-text-color)" : "var(--secondary-text-color)",
+        font: s.tab === t.id ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
+        onPick: () => this.setState({tab: t.id})
+      })),
+      isRegister: s.tab === "register",
+      isImport: s.tab === "import",
+      isQa: s.tab === "qa",
+
+      bodies: Array.from(new Set(DOCS.map(d => d.body))),
+      types: Array.from(new Set(DOCS.map(d => d.type))),
+      states: Array.from(new Set(DOCS.map(d => d.state))).concat(TERMINAL).filter((v, i, a) => a.indexOf(v) === i),
+      terminalStates: TERMINAL,
+
+      q: s.q, bodyFilter: s.bodyFilter, typeFilter: s.typeFilter, stateFilter: s.stateFilter,
+      activeOnly: s.activeOnly,
+      activeOnlyCheck: ao.check, activeOnlyBorder: ao.border, activeOnlyBg: ao.bg,
+      onQ: e => this.setState({q: e.target.value}),
+      onBody: e => this.setState({bodyFilter: e.target.value}),
+      onType: e => this.setState({typeFilter: e.target.value}),
+      onState: e => this.setState({stateFilter: e.target.value}),
+      onActiveOnly: () => this.setState(st => ({activeOnly: !st.activeOnly})),
+      onClearFilters: () => this.setState({q:"", bodyFilter:"", typeFilter:"", stateFilter:"", activeOnly:false}),
+      resultLabel: docs.length + " מתוך " + DOCS.length + " מסמכים",
+      registerEmpty: docs.length === 0,
+
+      docs: docs.map(d => {
+        const st = this.docState(d);
+        const meta = STATE[st] || STATE["טיוטה"];
+        const kb = KB[d.kb];
+        const open = s.openRef === d.ref;
+        const reason = s.rowReason[d.ref] || "";
+        const newState = s.rowState[d.ref] || "";
+        const disabled = !newState || !reason.trim();
+        const resolved = s.suggestionResolved[d.ref];
+        return {
+          ref: d.ref, title: d.title, type: d.type, body: d.body, date: d.date,
+          stateLabel: st, stateBg: meta.bg, stateFg: meta.fg,
+          kbLabel: kb.label, kbBg: kb.bg, kbFg: kb.fg,
+          uncertainStatus: !!d.uncertain,
+          open, toggleLabel: open ? "סגירה" : "ניהול",
+          onToggle: () => this.setState(x => ({openRef: x.openRef === d.ref ? null : d.ref})),
+
+          hasSuggestion: !!d.suggestion && !resolved,
+          suggestionText: d.suggestion || "",
+          suggestionWhy: d.why || "",
+          onAcceptSuggestion: () => this.setState(x => ({suggestionResolved: {...x.suggestionResolved, [d.ref]: "accepted"}})),
+          onRejectSuggestion: () => this.setState(x => ({suggestionResolved: {...x.suggestionResolved, [d.ref]: "rejected"}})),
+
+          stateSelId: "st-" + d.ref, reasonId: "rs-" + d.ref, dateId: "dt-" + d.ref, scopeId: "sc-" + d.ref,
+          newState, reason,
+          effDate: s.rowDate[d.ref] || "",
+          scope: s.rowScope[d.ref] || "המסמך כולו",
+          reasonInvalid: (newState && !reason.trim()) ? "true" : "false",
+          reasonBorder: (newState && !reason.trim()) ? "var(--negative-color)" : "var(--ui-border-color)",
+          reasonBorderFocus: (newState && !reason.trim()) ? "var(--negative-color)" : "var(--primary-color)",
+          onNewState: e => this.setState(x => ({rowState: {...x.rowState, [d.ref]: e.target.value}})),
+          onReason: e => this.setState(x => ({rowReason: {...x.rowReason, [d.ref]: e.target.value}})),
+          onEffDate: e => this.setState(x => ({rowDate: {...x.rowDate, [d.ref]: e.target.value}})),
+          onScope: e => this.setState(x => ({rowScope: {...x.rowScope, [d.ref]: e.target.value}})),
+          applyDisabled: disabled,
+          applyBg: disabled ? "var(--disabled-background-color)" : "var(--primary-color)",
+          applyFg: disabled ? "var(--disabled-text-color)" : "var(--text-color-on-primary)",
+          applyCursor: disabled ? "not-allowed" : "pointer",
+          applyHint: disabled ? "מצב ונימוק הם שדות חובה" : "השינוי יירשם ביומן עם שמך ומועד התחילה",
+          onApply: () => this.setState(x => ({
+            applied: {...x.applied, [d.ref]: x.rowState[d.ref]},
+            openRef: null
+          }))
+        };
+      }),
+
+      importRef: "IMP-2026-0007",
+      importFields: IMPORT_FIELDS.map(f => {
+        const unknown = s.importUnknown[f.key] !== undefined ? s.importUnknown[f.key] : !!f.startUnknown;
+        const confirmed = !!s.importConfirmed[f.key];
+        const value = s.importValues[f.key] !== undefined ? s.importValues[f.key] : f.ai;
+        return {
+          label: f.label,
+          value, dir: f.dir || "rtl", fontFamily: f.mono ? MONO : "inherit",
+          unknown, known: !unknown,
+          badge: unknown ? "לא ידוע" : confirmed ? "אומת בידי אדם" : "הצעת AI",
+          badgeBg: unknown ? "var(--ui-background-color)" : confirmed ? "var(--positive-color-selected)" : "var(--color-working_orange)",
+          badgeFg: unknown ? "var(--secondary-text-color)" : confirmed ? "#0b3d24" : "#323338",
+          confirmLabel: confirmed ? "אומת" : "אימות",
+          confirmColor: confirmed ? "var(--positive-color)" : "var(--primary-color)",
+          unknownLabel: unknown ? "יש נתון" : "סימון כלא ידוע",
+          hasSource: !!f.source, source: f.source || "",
+          onChange: e => this.setState(x => ({importValues: {...x.importValues, [f.key]: e.target.value}})),
+          onConfirm: () => this.setState(x => ({
+            importConfirmed: {...x.importConfirmed, [f.key]: true},
+            importUnknown: {...x.importUnknown, [f.key]: false}
+          })),
+          onUnknown: () => this.setState(x => ({
+            importUnknown: {...x.importUnknown, [f.key]: !unknown},
+            importConfirmed: {...x.importConfirmed, [f.key]: !unknown ? true : false}
+          }))
+        };
+      }),
+
+      access: s.access,
+      onAccess: e => this.setState({access: e.target.value}),
+      aiEligible: s.aiEligible,
+      aiCheck: ai.check, aiBorder: ai.border, aiBg: ai.bg,
+      onAiEligible: () => this.setState(x => ({aiEligible: !x.aiEligible})),
+      activationLabel: s.activated ? KB.active.label : (s.access ? KB.inactive.label : KB.blocked.label),
+      activationBg: s.activated ? KB.active.bg : (s.access ? KB.inactive.bg : KB.blocked.bg),
+      activationFg: s.activated ? KB.active.fg : (s.access ? KB.inactive.fg : KB.blocked.fg),
+      activateDisabled: !canActivate,
+      activateBg: canActivate ? "var(--positive-color)" : "var(--disabled-background-color)",
+      activateFg: canActivate ? "var(--text-color-on-primary)" : "var(--disabled-text-color)",
+      activateCursor: canActivate ? "pointer" : "not-allowed",
+      activateHint: s.activated
+        ? "המסמך מופעל. ביטול הפעלה מסיר אותו מהמענה בלי למחוק את המקור."
+        : !importDone ? "יש לאמת כל שדה או לסמנו כלא ידוע."
+        : !s.access ? "בלי היקף גישה מאושר המסמך נשאר מוגבל ולא מופעל."
+        : s.aiEligible ? "ההפעלה תכניס אותו למענה MeshekAI עם ציטוט." : "ההפעלה תאפשר חיפוש מילולי; שליחה לספק תישאר חסומה.",
+      onActivate: () => this.setState({activated: true}),
+
+      question: s.question,
+      onQuestion: e => this.setState({question: e.target.value}),
+      onAsk: () => this.setState({answer: QA.hall}),
+      examples: [
+        {label:"תעריף אולם לחבר קהילה", onPick: () => this.setState({question:"מה התעריף לשימוש באולם לחבר קהילה?", answer: QA.hall})},
+        {label:"תקופת ההתקשרות בבריכה", onPick: () => this.setState({question:"לכמה זמן אושר הסכם תחזוקת הבריכה?", answer: QA.pool})},
+        {label:"שאלה בלי מקורות", onPick: () => this.setState({question:"מה שכר מנהל הקהילה?", answer: QA.salary})}
+      ],
+      hasAnswer: !!s.answer,
+      answerBadge: s.answer ? s.answer.badge : "",
+      answerBadgeBg: s.answer ? s.answer.badgeBg : "",
+      answerBadgeFg: s.answer ? s.answer.badgeFg : "",
+      answerScope: s.answer ? s.answer.scope : "",
+      answerText: s.answer ? s.answer.text : "",
+      hasConflict: !!(s.answer && s.answer.conflict),
+      conflictText: s.answer ? s.answer.conflict : "",
+      hasCitations: !!(s.answer && s.answer.citations.length),
+      citations: (s.answer ? s.answer.citations : []).map(c => ({
+        ...c,
+        bar: c.active ? "var(--positive-color)" : "var(--color-american_gray)",
+        stateBg: c.uncertain ? "var(--warning-color)" : c.active ? "var(--positive-color-selected)" : "var(--ui-background-color)",
+        stateFg: c.uncertain ? "var(--fixed-dark-color)" : c.active ? "#0b3d24" : "var(--secondary-text-color)"
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

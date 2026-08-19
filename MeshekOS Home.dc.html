@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--allgrey-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--allgrey-background-color);display:grid;grid-template-columns:88px minmax(0,1fr);align-items:start">
+  <dc-import name="Rail" current="home" hint-size="88px,100vh"></dc-import>
+
+  <div style="min-width:0">
+
+    <header style="background:var(--primary-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-16) var(--space-24);display:flex;align-items:flex-end;gap:var(--space-16);flex-wrap:wrap">
+      <div>
+        <h1 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold)">{{ greeting }}</h1>
+        <div style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin-top:var(--space-4)">{{ subline }}</div>
+      </div>
+
+      <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+        <label for="body-filter" style="font:var(--font-text2-normal);color:var(--secondary-text-color)">גוף</label>
+        <select id="body-filter" value="{{ bodyFilter }}" onChange="{{ onBody }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+          <option value="">כל הגופים</option>
+          <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="4">
+            <option value="{{ b }}">{{ b }}</option>
+          </sc-for>
+        </select>
+        <select aria-label="דחיפות" value="{{ urgency }}" onChange="{{ onUrgency }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color)" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+          <option value="">כל הדחיפויות</option>
+          <option value="דורש אותי">דורש אותי</option>
+          <option value="ממתין לאחרים">ממתין לאחרים</option>
+        </select>
+      </div>
+    </header>
+
+    <main style="padding:var(--space-20) var(--space-24) var(--space-64);min-width:0;display:flex;flex-direction:column;gap:var(--space-24)">
+
+      <section aria-label="דורש את תשומת לבך">
+        <div style="display:flex;align-items:baseline;gap:var(--space-8);margin-bottom:var(--space-12)">
+          <h2 style="font:var(--font-h3-bold)">דורש את תשומת לבך</h2>
+          <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ attentionCount }}</span>
+        </div>
+
+        <sc-if value="{{ hasAttention }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--space-12)">
+            <sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+              <article style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-8)">
+                <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ a.tagBg }};color:{{ a.tagFg }};font:var(--font-text3-normal)">{{ a.tag }}</span>
+                  <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ a.body }}</span>
+                  <span dir="ltr" style="unicode-bidi:isolate;margin-inline-start:auto;font:var(--font-text3-normal);color:{{ a.dueColor }};font-variant-numeric:tabular-nums">{{ a.due }}</span>
+                </div>
+                <h3 style="font:var(--font-text1-medium)">{{ a.title }}</h3>
+                <p style="margin:0;font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ a.why }}</p>
+                <div style="margin-top:auto;display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                  <a href="{{ a.href }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;text-decoration:none" style-hover="background:var(--primary-hover-color);text-decoration:none">{{ a.action }}</a>
+                  <button type="button" onClick="{{ a.onDismiss }}" style="background:transparent;border:0;color:var(--secondary-text-color);font:var(--font-text2-normal);cursor:pointer;padding:var(--space-4)" style-hover="color:var(--primary-text-color)">לא עכשיו</button>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ attentionEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-24)">
+            <h3 style="font:var(--font-text1-medium);margin-bottom:var(--space-4)">אין פריטים שדורשים אותך כרגע</h3>
+            <p style="margin:0;font:var(--font-text2-normal);color:var(--secondary-text-color);max-width:60ch">מה שממתין לאחרים מופיע באזורים למטה. פריט יחזור לכאן ברגע שההכרעה תעבור אליך.</p>
+          </div>
+        </sc-if>
+      </section>
+
+      <section aria-label="משימות וביצוע">
+        <div style="display:flex;align-items:baseline;gap:var(--space-12);margin-bottom:var(--space-12);flex-wrap:wrap">
+          <h2 style="font:var(--font-h3-bold)">משימות וביצוע</h2>
+          <a href="MeshekOS%20Board%20v3.dc.html" style="font:var(--font-text2-normal)">לרשומה המלאה</a>
+        </div>
+        <div style="border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);overflow:hidden;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--layout-border-color)">
+          <sc-for list="{{ taskStats }}" as="t" hint-placeholder-count="5">
+            <a href="MeshekOS%20Board%20v3.dc.html" style="background:var(--primary-background-color);padding:var(--space-16);text-decoration:none;color:var(--primary-text-color);display:flex;flex-direction:column;gap:2px" style-hover="background:var(--allgrey-background-color);text-decoration:none">
+              <span style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold);color:{{ t.color }}"><span dir="ltr" style="display:inline-block;unicode-bidi:isolate;font-variant-numeric:tabular-nums">{{ t.count }}</span></span>
+              <span style="font:var(--font-text2-normal)">{{ t.label }}</span>
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ t.note }}</span>
+            </a>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:var(--space-24);align-items:start">
+
+        <section aria-label="מצב הפרוטוקולים">
+          <div style="display:flex;align-items:baseline;gap:var(--space-12);margin-bottom:var(--space-12);flex-wrap:wrap">
+            <h2 style="font:var(--font-h3-bold)">מצב הפרוטוקולים</h2>
+            <a href="MeshekOS%20Meetings.dc.html" style="font:var(--font-text2-normal)">לישיבות</a>
+          </div>
+          <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);overflow:hidden">
+            <sc-for list="{{ protocolStages }}" as="p" hint-placeholder-count="5">
+              <a href="MeshekOS%20Meetings.dc.html" style="display:flex;align-items:center;gap:var(--space-12);padding:var(--space-12) var(--space-16);border-bottom:1px solid var(--layout-border-color);text-decoration:none;color:var(--primary-text-color)" style-hover="background:var(--allgrey-background-color);text-decoration:none">
+                <span style="width:6px;height:28px;border-radius:2px;background:{{ p.bar }};flex:none"></span>
+                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                  <span style="font:var(--font-text2-normal)">{{ p.label }}</span>
+                  <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ p.note }}</span>
+                </span>
+                <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text1-medium);font-variant-numeric:tabular-nums;color:{{ p.color }}">{{ p.count }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </section>
+
+        <section aria-label="ישיבות מתקרבות">
+          <div style="display:flex;align-items:baseline;gap:var(--space-12);margin-bottom:var(--space-12);flex-wrap:wrap">
+            <h2 style="font:var(--font-h3-bold)">ישיבות מתקרבות</h2>
+            <a href="MeshekOS%20Meetings.dc.html" style="font:var(--font-text2-normal)">ליומן</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+            <sc-for list="{{ meetings }}" as="m" hint-placeholder-count="3">
+              <article style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-8)">
+                <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                  <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-medium);font-variant-numeric:tabular-nums">{{ m.date }}</span>
+                  <span style="font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ m.body }}</span>
+                  <span style="margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ m.agendaBg }};color:{{ m.agendaFg }};font:var(--font-text3-normal)">{{ m.agenda }}</span>
+                </div>
+                <div style="font:var(--font-text2-normal)">{{ m.title }}</div>
+                <sc-if value="{{ m.hasGaps }}" hint-placeholder-val="{{ false }}">
+                  <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-4)">
+                    <sc-for list="{{ m.gaps }}" as="g" hint-placeholder-count="2">
+                      <li style="display:flex;gap:var(--space-8);align-items:baseline;font:var(--font-text3-normal);color:var(--secondary-text-color)">
+                        <span style="width:6px;height:6px;border-radius:50%;background:{{ g.dot }};flex:none;margin-top:6px"></span>
+                        <span>{{ g.text }}</span>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </sc-if>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+
+      <section aria-label="נושאים פתוחים וחוזרים">
+        <div style="display:flex;align-items:baseline;gap:var(--space-12);margin-bottom:var(--space-4);flex-wrap:wrap">
+          <h2 style="font:var(--font-h3-bold)">נושאים פתוחים וחוזרים</h2>
+          <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">הכנסה לסדר יום מאושרת בידי אדם, לא בידי המערכת</span>
+        </div>
+        <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);overflow-x:auto;margin-top:var(--space-8)">
+          <div style="display:flex;min-width:900px;border-bottom:1px solid var(--layout-border-color);font:var(--font-text2-normal);color:var(--secondary-text-color)">
+            <div style="flex:1;min-width:260px;padding:var(--space-8) var(--space-16)">נושא</div>
+            <div style="width:150px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">גוף</div>
+            <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">סוג</div>
+            <div style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מועד</div>
+            <div style="width:200px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">סדר יום</div>
+          </div>
+          <sc-for list="{{ unresolved }}" as="u" hint-placeholder-count="4">
+            <div style="display:flex;min-width:900px;align-items:stretch;min-height:48px;border-bottom:1px solid var(--layout-border-color)" style-hover="background:var(--allgrey-background-color)">
+              <div style="flex:1;min-width:260px;padding:var(--space-8) var(--space-16);display:flex;flex-direction:column;justify-content:center;gap:2px;align-items:flex-start">
+                <span style="font:var(--font-text2-normal)">{{ u.title }}</span>
+                <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ u.ref }}</span>
+              </div>
+              <div style="width:150px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ u.body }}</div>
+              <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ u.kindBg }};color:{{ u.kindFg }};font:var(--font-text3-normal)">{{ u.kind }}</span>
+              </div>
+              <div dir="ltr" style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text3-normal);color:{{ u.dueColor }};font-variant-numeric:tabular-nums">{{ u.due }}</div>
+              <div style="width:200px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-4)">
+                <sc-if value="{{ u.pending }}" hint-placeholder-val="{{ true }}">
+                  <span style="display:flex;gap:var(--space-4)">
+                    <button type="button" onClick="{{ u.onAdd }}" style="background:transparent;color:var(--primary-color);border:1px solid var(--primary-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-selected-color)">הוספה</button>
+                    <button type="button" onClick="{{ u.onSkip }}" style="background:transparent;color:var(--secondary-text-color);border:0;border-radius:var(--border-radius-small);height:24px;padding:0 var(--space-4);font:var(--font-text2-normal);cursor:pointer" style-hover="color:var(--primary-text-color)">דחייה</button>
+                  </span>
+                </sc-if>
+                <sc-if value="{{ u.decided }}" hint-placeholder-val="{{ false }}">
+                  <span style="font:var(--font-text2-normal);color:{{ u.decidedColor }}">{{ u.decidedLabel }}</span>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-label="החלטות אחרונות">
+        <div style="display:flex;align-items:baseline;gap:var(--space-12);margin-bottom:var(--space-12);flex-wrap:wrap">
+          <h2 style="font:var(--font-h3-bold)">החלטות אחרונות</h2>
+          <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">חוצה גופים</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--space-12)">
+          <sc-for list="{{ decisions }}" as="d" hint-placeholder-count="3">
+            <article style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-8)">
+              <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ d.ref }}</span>
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ d.body }}</span>
+                <span dir="ltr" style="unicode-bidi:isolate;margin-inline-start:auto;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ d.date }}</span>
+              </div>
+              <h3 style="font:var(--font-text1-medium)">{{ d.title }}</h3>
+              <p style="margin:0;font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ d.summary }}</p>
+              <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;border-top:1px solid var(--layout-border-color);padding-top:var(--space-8)">
+                <span style="height:20px;width:20px;box-sizing:border-box;flex:none;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ d.ownerBg }};color:var(--text-color-on-inverted);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ d.ownerInitials }}</span>
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ d.owner }}</span>
+                <a href="MeshekOS%20Meetings.dc.html" style="margin-inline-start:auto;font:var(--font-text2-normal)">לפרוטוקול</a>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+const BODIES = ["הנהלת הקהילה","ועדת תשתיות","ועדת חינוך","ועדת תרבות"];
+
+const ATTENTION = [
+  {tag:"סתירה בין מקורות", kind:"דורש אותי", body:"הנהלת הקהילה", due:"באיחור 5 ימים", overdue:true,
+   title:"הרחבת שעות מרכז הצעירים", why:"התקציב בטיוטה אינו תואם את הפרוטוקול. ההכרעה ממתינה לך.",
+   action:"לסקירה", href:"MeshekOS%20Review%20Split.dc.html", tagBg:"var(--color-sofia_pink)", tagFg:"#ffffff"},
+  {tag:"פרוטוקול לאישור", kind:"דורש אותי", body:"ועדת חינוך", due:"מחר",
+   title:"פרוטוקול ועדת חינוך 4/2026", why:"טיוטה מוכנה. אישור מקפיא את הנוסח ומפרסם אותו לחברי הגוף.",
+   action:"לפרוטוקול", href:"MeshekOS%20Meetings.dc.html", tagBg:"var(--color-working_orange)", tagFg:"#323338"},
+  {tag:"ממתין להקצאה", kind:"דורש אותי", body:"הנהלת הקהילה", due:"25.06",
+   title:"תחזוקת מקלטים — ללא אחראי", why:"מצב מוצהר ומתועד. בלי אחראי הפריט לא יזוז.",
+   action:"להקצאה", href:"MeshekOS%20Board%20v3.dc.html", tagBg:"var(--color-stuck-red)", tagFg:"#ffffff"},
+  {tag:"תוקף פג", kind:"ממתין לאחרים", body:"הנהלת הקהילה", due:"31.12.2025", overdue:true,
+   title:"תעריפי שימוש באולם", why:"התעריפים פגי תוקף וטרם חודשו. MeshekAI מסמן אותם כמצב לא ודאי בכל תשובה.",
+   action:"למסמך", href:"MeshekOS%20Documents.dc.html", tagBg:"var(--color-american_gray)", tagFg:"#ffffff"}
+];
+
+const TASKS = [
+  {label:"באיחור", count:"4", note:"שלושה מעל שבוע", color:"var(--negative-color)"},
+  {label:"מתקרבות ליעד", count:"6", note:"בשבעה הימים הבאים", color:"var(--color-working_orange)"},
+  {label:"ממתינות לעדכון", count:"3", note:"אין דיווח מעל 14 יום", color:"var(--primary-text-color)"},
+  {label:"ממתינות להקצאה", count:"2", note:"בלי אחראי", color:"var(--primary-text-color)"},
+  {label:"בקשות הארכה", count:"1", note:"ממתינה להכרעתך", color:"var(--primary-color)"}
+];
+
+const PROTOCOLS = [
+  {label:"ישיבות בלי תוכן שהועלה", count:"2", note:"התכנסו ולא הועלה חומר", bar:"var(--color-stuck-red)", color:"var(--negative-color)"},
+  {label:"בעיבוד", count:"1", note:"תמלול והפקת טיוטה", bar:"var(--color-navy)", color:"var(--primary-text-color)"},
+  {label:"טיוטות לסקירה", count:"3", note:"ממתינות לעריכה אנושית", bar:"var(--color-working_orange)", color:"var(--primary-text-color)"},
+  {label:"ממתינים לאישור", count:"2", note:"אחד מהם ממתין לך", bar:"var(--primary-color)", color:"var(--primary-color)"},
+  {label:"מאושרים לפרסום", count:"1", note:"אושר וטרם פורסם לחברי הגוף", bar:"var(--positive-color)", color:"var(--positive-color)"}
+];
+
+const MEETINGS = [
+  {date:"24.08.2026", body:"ועדת תשתיות", title:"ועדת תשתיות 6/2026", agenda:"סדר יום מוכן", ready:true,
+   gaps:[]},
+  {date:"26.08.2026", body:"הנהלת הקהילה", title:"ישיבת הנהלה 13/2026", agenda:"סדר יום פתוח", ready:false,
+   gaps:[{text:"חסר אומדן מהנדס לסעיף המקלטים", severe:true},
+         {text:"פרוטוקול 12/2026 ממתין לאישור בישיבה"},
+         {text:"שני נושאים סומנו לחזור מהישיבה הקודמת"}]},
+  {date:"02.09.2026", body:"ועדת חינוך", title:"ועדת חינוך 5/2026", agenda:"טרם נבנה", ready:false,
+   gaps:[{text:"תוכנית חוגי הקיץ נשארה כטיוטה"}]}
+];
+
+const UNRESOLVED = [
+  {ref:"DEC-2026-0121", title:"מיקום עמדות טעינה חשמליות", body:"הנהלת הקהילה", kind:"תלוי בהחלטה פתוחה", due:"—"},
+  {ref:"TSK-2026-0509", title:"תחזוקת מקלטים — נדחה בהסכמה", body:"הנהלת הקהילה", kind:"נדחה מישיבה", due:"26.08", soon:true},
+  {ref:"DEC-2025-0402", title:"תעריפי אולם — תוקף פג", body:"הנהלת הקהילה", kind:"מועד בדיקה הגיע", due:"01.01", overdue:true},
+  {ref:"CON-2024-0018", title:"הסכם גינון — תום תוקף", body:"ועדת תשתיות", kind:"חוזה מתקרב לתום", due:"30.09"}
+];
+
+const KIND_STYLE = {
+  "תלוי בהחלטה פתוחה": {bg:"var(--color-dark_purple)", fg:"#ffffff"},
+  "נדחה מישיבה":       {bg:"var(--color-working_orange)", fg:"#323338"},
+  "מועד בדיקה הגיע":   {bg:"var(--color-stuck-red)", fg:"#ffffff"},
+  "חוזה מתקרב לתום":   {bg:"var(--color-navy)", fg:"#ffffff"}
+};
+
+const DECISIONS = [
+  {ref:"DEC-2026-0103", body:"ועדת תשתיות", date:"13.08.2026", title:"הסכם תחזוקת הבריכה",
+   summary:"אושר לתקופה של 36 חודשים לפי ההסכם החתום. הפער מול הטיוטה בסקירה.",
+   owner:"מיכל רז", ownerInitials:"מר", ownerBg:"var(--color-dark_purple)"},
+  {ref:"DEC-2026-0117", body:"הנהלת הקהילה", date:"12.08.2026", title:"אימוץ נוהל רכש מעודכן",
+   summary:"אומץ בכפוף לצירוף הגרסה החתומה. הגרסה טרם צורפה.",
+   owner:"איתי ברק", ownerInitials:"אב", ownerBg:"var(--color-navy)"},
+  {ref:"DEC-2026-0088", body:"ועדת חינוך", date:"11.08.2026", title:"תוספת סייעת לגן הרימון",
+   summary:"אושרה בעלות חודשית של ₪6,200. הסכום הוזן ידנית ללא אסמכתא.",
+   owner:"נועה שחר", ownerInitials:"נש", ownerBg:"var(--color-grass_green)"}
+];
+
+class Component extends DCLogic {
+  state = {bodyFilter:"", urgency:"", dismissed:{}, agenda:{}};
+
+  renderVals() {
+    const s = this.state;
+
+    const attention = ATTENTION.filter((a, i) =>
+      !s.dismissed[i] &&
+      (!s.bodyFilter || a.body === s.bodyFilter) &&
+      (!s.urgency || a.kind === s.urgency)
+    );
+
+    const meetings = MEETINGS.filter(m => !s.bodyFilter || m.body === s.bodyFilter);
+    const unresolved = UNRESOLVED.filter(u => !s.bodyFilter || u.body === s.bodyFilter);
+    const decisions = DECISIONS.filter(d => !s.bodyFilter || d.body === s.bodyFilter);
+
+    return {
+      greeting: "בוקר טוב, יעל",
+      subline: "שלושה פריטים ממתינים להכרעתך, ופרוטוקול אחד ממתין לאישור לפני הישיבה של ה-26.08",
+      bodies: BODIES,
+      bodyFilter: s.bodyFilter,
+      urgency: s.urgency,
+      onBody: e => this.setState({bodyFilter: e.target.value}),
+      onUrgency: e => this.setState({urgency: e.target.value}),
+
+      attentionCount: attention.length + " פריטים",
+      hasAttention: attention.length > 0,
+      attentionEmpty: attention.length === 0,
+      attention: ATTENTION.map((a, i) => ({...a, idx:i}))
+        .filter(a => !s.dismissed[a.idx] && (!s.bodyFilter || a.body === s.bodyFilter) && (!s.urgency || a.kind === s.urgency))
+        .map(a => ({
+          ...a,
+          dueColor: a.overdue ? "var(--negative-color)" : "var(--secondary-text-color)",
+          onDismiss: () => this.setState(x => ({dismissed: {...x.dismissed, [a.idx]: true}}))
+        })),
+
+      taskStats: TASKS,
+      protocolStages: PROTOCOLS,
+
+      meetings: meetings.map(m => ({
+        date: m.date, body: m.body, title: m.title, agenda: m.agenda,
+        agendaBg: m.ready ? "var(--positive-color-selected)" : "var(--color-working_orange)",
+        agendaFg: m.ready ? "#0b3d24" : "#323338",
+        hasGaps: m.gaps.length > 0,
+        gaps: m.gaps.map(g => ({text: g.text, dot: g.severe ? "var(--negative-color)" : "var(--color-wolf_gray)"}))
+      })),
+
+      unresolved: unresolved.map((u, i) => {
+        const key = u.ref;
+        const decided = s.agenda[key];
+        const ks = KIND_STYLE[u.kind] || KIND_STYLE["נדחה מישיבה"];
+        return {
+          ...u,
+          kindBg: ks.bg, kindFg: ks.fg,
+          dueColor: u.overdue ? "var(--negative-color)" : u.soon ? "var(--color-working_orange)" : "var(--secondary-text-color)",
+          pending: !decided,
+          decided: !!decided,
+          decidedLabel: decided === "add" ? "נוסף לסדר היום" : "נדחה להמשך",
+          decidedColor: decided === "add" ? "var(--positive-color)" : "var(--secondary-text-color)",
+          onAdd: () => this.setState(x => ({agenda: {...x.agenda, [key]: "add"}})),
+          onSkip: () => this.setState(x => ({agenda: {...x.agenda, [key]: "skip"}}))
+        };
+      }),
+
+      decisions
+    };
+  }
+}
+</script>
+</body>
+</html>

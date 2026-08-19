@@ -12,66 +12,123 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
 </helmet>
 
-<nav dir="rtl" aria-label="ניווט ראשי" style="background:var(--primary-background-color);border-inline-start:1px solid var(--layout-border-color);padding:var(--space-16) var(--space-12);display:flex;flex-direction:column;gap:var(--space-20);position:sticky;top:0;height:100vh;box-sizing:border-box;overflow-y:auto;font:var(--font-text2-normal);color:var(--primary-text-color)">
+<nav dir="rtl" aria-label="ניווט ראשי" style="background:var(--allgrey-background-color);border-inline-start:1px solid var(--layout-border-color);width:88px;box-sizing:border-box;padding:var(--space-16) var(--space-4) var(--space-12);display:flex;flex-direction:column;align-items:center;gap:var(--space-4);position:sticky;top:0;height:100vh;overflow-y:auto;font:var(--font-text2-normal);color:var(--primary-text-color)">
 
-  <div style="padding-inline:var(--space-4)">
-    <a href="MeshekOS%20Board%20v3.dc.html" style="display:block">
-      <img src="assets/meshekos-logo.png" alt="MeshekOS" style="display:block;width:100%;max-width:198px;height:auto;border-radius:var(--border-radius-4)">
-    </a>
-  </div>
+  <a href="MeshekOS%20Home.dc.html" aria-label="MeshekOS" style="display:block;margin-bottom:var(--space-12)">
+    <img src="assets/meshekos-logo.png" alt="MeshekOS" style="display:block;width:64px;height:auto">
+  </a>
 
-  <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-2)">
-    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
-      <li>
-        <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;gap:var(--space-8);padding:var(--space-8) var(--space-12);border-radius:var(--border-radius-4);font:var(--font-text2-normal);font-weight:{{ n.weight }};color:{{ n.color }};text-decoration:none;background:{{ n.bg }};cursor:{{ n.cursor }}" style-hover="background:var(--primary-background-hover-color);text-decoration:none">
-          <span>{{ n.label }}</span>
-          <sc-if value="{{ n.soon }}" hint-placeholder-val="{{ false }}">
-            <span style="margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--space-4);border-radius:var(--border-radius-4);background:var(--ui-background-color);color:var(--secondary-text-color);font:var(--font-text3-normal)">בקרוב</span>
-          </sc-if>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+    <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
+      <sc-if value="{{ g.divider }}" hint-placeholder-val="{{ false }}">
+        <span style="width:44px;height:1px;background:var(--layout-border-color);margin:var(--space-8) 0"></span>
+      </sc-if>
+
+      <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="3">
+        <a href="{{ n.href }}" aria-current="{{ n.current }}" title="{{ n.title }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:var(--space-4);padding:var(--space-4) 2px;border-radius:var(--border-radius-8);text-decoration:none;color:{{ n.color }};cursor:{{ n.cursor }}" style-hover="background:var(--primary-background-hover-color);text-decoration:none">
+          <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--border-radius-8);background:{{ n.iconBg }};display:grid;place-items:center;transition:background var(--motion-productive-medium) var(--motion-timing-transition)">
+            <svg viewBox="0 0 20 20" width="22" height="22" fill="none" style="color:{{ n.iconColor }}">
+              <sc-if value="{{ n.isHome }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.56992 2.1408C9.82591 1.95307 10.1741 1.95307 10.4301 2.1408L17.7028 7.47413C17.8896 7.61113 18 7.82894 18 8.06061V16.7879C18 17.1895 17.6744 17.5152 17.2727 17.5152H11.9394C11.5377 17.5152 11.2121 17.1895 11.2121 16.7879V13.1515H8.78788V16.7879C8.78788 17.1895 8.46227 17.5152 8.06061 17.5152H2.72727C2.32561 17.5152 2 17.1895 2 16.7879V8.06061C2 7.82894 2.11037 7.61113 2.29719 7.47413L9.56992 2.1408ZM3.45455 8.42914V16.0606H7.33333V12.4242C7.33333 12.0226 7.65894 11.697 8.06061 11.697H11.9394C12.3411 11.697 12.6667 12.0226 12.6667 12.4242V16.0606H16.5455V8.42914L10 3.62914L3.45455 8.42914Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isBoard }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5H16C16.2761 4.5 16.5 4.72386 16.5 5V15C16.5 15.2761 16.2761 15.5 16 15.5H7.5L7.5 4.5ZM6 4.5H4C3.72386 4.5 3.5 4.72386 3.5 5V15C3.5 15.2761 3.72386 15.5 4 15.5H6L6 4.5ZM2 5C2 3.89543 2.89543 3 4 3H16C17.1046 3 18 3.89543 18 5V15C18 16.1046 17.1046 17 16 17H4C2.89543 17 2 16.1046 2 15V5Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isReview }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 4.5H7.5L7.5 15.5H16C16.2761 15.5 16.5 15.2761 16.5 15V5C16.5 4.72386 16.2761 4.5 16 4.5ZM4 4.5H6L6 15.5H4C3.72386 15.5 3.5 15.2761 3.5 15V5C3.5 4.72386 3.72386 4.5 4 4.5ZM4 3C2.89543 3 2 3.89543 2 5V15C2 16.1046 2.89543 17 4 17H16C17.1046 17 18 16.1046 18 15V5C18 3.89543 17.1046 3 16 3H4ZM15 14V9H9V14H15Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isMeetings }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M6.83801 3C6.83801 2.58579 6.50223 2.25 6.08801 2.25C5.6738 2.25 5.33801 2.58579 5.33801 3V5.15381V7.30769C5.33801 7.72191 5.6738 8.05769 6.08801 8.05769C6.50223 8.05769 6.83801 7.72191 6.83801 7.30769V5.90381H11.4726C11.8868 5.90381 12.2226 5.56802 12.2226 5.15381C12.2226 4.73959 11.8868 4.40381 11.4726 4.40381H6.83801V3ZM2.64227 4.9389C2.98489 4.59629 3.44957 4.40381 3.9341 4.40381C4.34831 4.40381 4.6841 4.73959 4.6841 5.15381C4.6841 5.56802 4.34831 5.90381 3.9341 5.90381C3.8474 5.90381 3.76424 5.93825 3.70293 5.99956C3.64162 6.06087 3.60718 6.14403 3.60718 6.23073V8.71149H16.1072V6.23073C16.1072 6.14403 16.0727 6.06087 16.0114 5.99956C15.9501 5.93825 15.867 5.90381 15.7803 5.90381H14.3765V7.30769C14.3765 7.72191 14.0407 8.05769 13.6265 8.05769C13.2123 8.05769 12.8765 7.72191 12.8765 7.30769V5.16301L12.8764 5.15381L12.8765 5.1446V3C12.8765 2.58579 13.2123 2.25 13.6265 2.25C14.0407 2.25 14.3765 2.58579 14.3765 3V4.40381H15.7803C16.2648 4.40381 16.7295 4.59629 17.0721 4.9389C17.4147 5.28152 17.6072 5.7462 17.6072 6.23073V9.46149V15.923C17.6072 16.4076 17.4147 16.8723 17.0721 17.2149C16.7295 17.5575 16.2648 17.75 15.7803 17.75H3.9341C3.44957 17.75 2.98489 17.5575 2.64227 17.2149C2.29966 16.8723 2.10718 16.4076 2.10718 15.923V9.46149V6.23073C2.10718 5.7462 2.29966 5.28152 2.64227 4.9389ZM3.60718 15.923V10.2115H16.1072V15.923C16.1072 16.0097 16.0727 16.0929 16.0114 16.1542C15.9501 16.2155 15.867 16.25 15.7803 16.25H3.9341C3.8474 16.25 3.76424 16.2155 3.70293 16.1542C3.64162 16.0929 3.60718 16.0097 3.60718 15.923Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isTranscribe }}" hint-placeholder-val="{{ false }}">
+                <g><path fill="currentColor" fill-rule="evenodd" d="M12.8 3.451c.33.15.61.4.81.71h.01c.19.3.3.66.3 1.03v9.64c0 .36-.1.72-.3 1.03-.2.3-.48.55-.81.71-.33.16-.7.22-1.06.19a2.05 2.05 0 0 1-.98-.36l-5.26-3.24H3.24c-.52 0-1.02-.2-1.4-.56-.37-.37-.59-.86-.59-1.39v-2.4c0-.53.21-1.03.59-1.39.38-.36.88-.56 1.4-.56H5.5l5.26-3.24c.29-.21.63-.33.98-.36.37-.04.73.03 1.06.19Zm-9.56 8.19h1.73v-3.3H3.24c-.14 0-.27.05-.36.14-.08.09-.13.2-.13.31v2.4c0 .11.04.22.13.31s.22.14.36.14Zm9.1 3.38a.39.39 0 0 0 .07-.23h-.01v-9.6c0-.08-.03-.16-.07-.23a.45.45 0 0 0-.19-.17c-.08-.05-.17-.05-.27-.05-.1.01-.19.05-.26.1-.02.01-.05.03-.05.03l-5.1 3.14v3.96l5.1 3.14.025.015a.22.22 0 0 0 .025.015c.08.06.16.1.26.1.09.01.19-.01.27-.05.09-.04.16-.1.2-.17Z" clip-rule="evenodd"></path><path fill="currentColor" d="M17.34 7.381c.44.33.8.75 1.04 1.24v-.02c.24.49.37 1.02.37 1.57s-.13 1.08-.37 1.57c-.25.49-.6.91-1.04 1.24a.749.749 0 1 1-.91-1.19c.25-.19.46-.44.6-.72.14-.28.21-.58.21-.89 0-.31-.07-.61-.21-.89-.14-.28-.34-.53-.6-.72a.749.749 0 1 1 .91-1.19Z"></path></g>
+              </sc-if>
+              <sc-if value="{{ n.isDocs }}" hint-placeholder-val="{{ false }}">
+                <g><path d="M6.81934 9.8501C6.40512 9.8501 6.06934 10.1859 6.06934 10.6001C6.06934 11.0143 6.40512 11.3501 6.81934 11.3501H12.8413C13.2555 11.3501 13.5913 11.0143 13.5913 10.6001C13.5913 10.1859 13.2555 9.8501 12.8413 9.8501H6.81934Z" fill="currentColor"></path><path d="M6.81953 13.0501C6.40531 13.0501 6.06953 13.3859 6.06953 13.8001C6.06953 14.2143 6.40531 14.5501 6.81953 14.5501H10.6828C11.097 14.5501 11.4328 14.2143 11.4328 13.8001C11.4328 13.3859 11.097 13.0501 10.6828 13.0501H6.81953Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M16.5561 7.56686C16.5561 7.58719 16.5553 7.60733 16.5537 7.62725V16.3269C16.5537 16.7839 16.3722 17.2223 16.049 17.5454C15.7258 17.8686 15.2874 18.0502 14.8304 18.0502H5.12372C4.66667 18.0502 4.22833 17.8686 3.90514 17.5454C3.58196 17.2223 3.40039 16.7839 3.40039 16.3269V3.67353C3.40039 3.21647 3.58196 2.77814 3.90514 2.45495C4.22833 2.13176 4.66667 1.9502 5.12372 1.9502H11.0208C11.4775 1.95029 11.9157 2.1317 12.2387 2.45456L16.0492 6.265C16.372 6.58807 16.5536 7.02626 16.5537 7.483V7.50648C16.5553 7.5264 16.5561 7.54653 16.5561 7.56686ZM5.12372 3.4502C5.06449 3.4502 5.00769 3.47372 4.9658 3.51561C4.92392 3.55749 4.90039 3.6143 4.90039 3.67353V16.3269C4.90039 16.3861 4.92392 16.4429 4.9658 16.4848C5.00769 16.5267 5.06449 16.5502 5.12372 16.5502H14.8304C14.8896 16.5502 14.9464 16.5267 14.9883 16.4848C15.0302 16.4429 15.0537 16.3861 15.0537 16.3269V8.31686H11.9128C11.4557 8.31686 11.0174 8.1353 10.6942 7.81211C10.371 7.48892 10.1895 7.05059 10.1895 6.59353V3.50488L5.12372 3.4502ZM14.4797 6.81686L11.6895 4.02658V6.59353C11.6895 6.65276 11.713 6.70956 11.7549 6.75145C11.7967 6.79333 11.8536 6.81686 11.9128 6.81686H14.4797Z" fill="currentColor"></path></g>
+              </sc-if>
+              <sc-if value="{{ n.isAsk }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0151 4.16666C11.0151 3.75244 10.6794 3.41666 10.2651 3.41666C9.85093 3.41666 9.51514 3.75244 9.51514 4.16666V5.57575L6.66666 5.57575C5.14787 5.57575 3.91666 6.80697 3.91666 8.32575V8.48484H3.72726C2.76077 8.48484 1.97726 9.26834 1.97726 10.2348V12.1136C1.97726 13.0801 2.76077 13.8636 3.72727 13.8636H3.91666V14.0227C3.91666 15.5415 5.14788 16.7727 6.66666 16.7727H13.3333C14.8521 16.7727 16.0833 15.5415 16.0833 14.0227V13.8636H16.2727C17.2392 13.8636 18.0227 13.0801 18.0227 12.1136V10.2348C18.0227 9.26834 17.2392 8.48484 16.2727 8.48484H16.0833V8.32575C16.0833 6.80696 14.8521 5.57575 13.3333 5.57575L11.0151 5.57575V4.16666ZM14.5833 13.1136L14.5833 13.1148V14.0227C14.5833 14.7131 14.0237 15.2727 13.3333 15.2727H6.66666C5.9763 15.2727 5.41666 14.7131 5.41666 14.0227V13.1136V9.23484V8.32575C5.41666 7.63539 5.9763 7.07575 6.66666 7.07575H13.3333C14.0237 7.07575 14.5833 7.63539 14.5833 8.32575V9.23363L14.5833 9.23484V13.1136ZM16.2727 12.3636H16.0833V9.98484H16.2727C16.4108 9.98484 16.5227 10.0968 16.5227 10.2348V12.1136C16.5227 12.2517 16.4108 12.3636 16.2727 12.3636ZM3.91666 12.3636V9.98484H3.72726C3.58919 9.98484 3.47726 10.0968 3.47726 10.2348V12.1136C3.47726 12.2517 3.58919 12.3636 3.72727 12.3636H3.91666ZM9.07575 9.98484C9.07575 9.57062 8.73996 9.23484 8.32575 9.23484C7.91154 9.23484 7.57575 9.57062 7.57575 9.98484V11.3939C7.57575 11.8081 7.91154 12.1439 8.32575 12.1439C8.73996 12.1439 9.07575 11.8081 9.07575 11.3939V9.98484ZM12.2045 9.23484C12.6187 9.23484 12.9545 9.57062 12.9545 9.98484V11.3939C12.9545 11.8081 12.6187 12.1439 12.2045 12.1439C11.7903 12.1439 11.4545 11.8081 11.4545 11.3939V9.98484C11.4545 9.57062 11.7903 9.23484 12.2045 9.23484Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isForm }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M10 2.25C10.4142 2.25 10.75 2.58579 10.75 3V9.25H17C17.4142 9.25 17.75 9.58579 17.75 10C17.75 10.4142 17.4142 10.75 17 10.75H10.75V17C10.75 17.4142 10.4142 17.75 10 17.75C9.58579 17.75 9.25 17.4142 9.25 17V10.75H3C2.58579 10.75 2.25 10.4142 2.25 10C2.25 9.58579 2.58579 9.25 3 9.25H9.25V3C9.25 2.58579 9.58579 2.25 10 2.25Z" fill="currentColor"></path>
+              </sc-if>
+              <sc-if value="{{ n.isTasks }}" hint-placeholder-val="{{ false }}">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path>
+              </sc-if>
+            </svg>
+          </span>
+          <span style="font:var(--font-text3-normal);font-weight:{{ n.weight }};text-align:center;line-height:14px">{{ n.label }}</span>
         </a>
-      </li>
-    </sc-for>
-  </ul>
-
-  <div style="margin-top:auto;display:flex;flex-direction:column;gap:var(--space-8);font:var(--font-text3-normal);padding-inline:var(--space-4)">
-    <a href="#" style="color:var(--link-color);text-decoration:none">התראות (4)</a>
-    <div style="display:flex;align-items:center;gap:var(--space-8)">
-      <span style="height:28px;width:28px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:var(--color-dark_purple);color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:21px;letter-spacing:-0.5px;margin-top:1px">יל</span>
-      <span>יעל לביא</span>
+      </sc-for>
     </div>
-    <a href="MeshekOS%20Auth.dc.html" style="color:var(--secondary-text-color);text-decoration:none">יציאה</a>
+  </sc-for>
+
+  <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:var(--space-8);padding-top:var(--space-12)">
+    <a href="#" title="התראות" aria-label="התראות (4)" style="position:relative;width:40px;height:40px;border-radius:var(--border-radius-8);display:grid;place-items:center;color:var(--icon-color);text-decoration:none" style-hover="background:var(--primary-background-hover-color)">
+      <svg viewBox="0 0 20 20" width="22" height="22" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M10 2.04999C10.4143 2.04999 10.75 2.38577 10.75 2.79999V3.61058C12.0546 3.75821 13.2785 4.34336 14.2159 5.28079C15.309 6.37389 15.9231 7.85644 15.9231 9.4023C15.9231 11.7406 16.1727 13.0548 16.3959 13.758C16.5068 14.1075 16.6088 14.2984 16.6645 14.3868C16.6835 14.4168 16.697 14.435 16.7038 14.4435C16.9179 14.6455 16.9953 14.9565 16.8964 15.2377C16.7908 15.538 16.5072 15.7389 16.1889 15.7389H12.9529C12.9516 15.8038 12.9418 15.8695 12.9226 15.9348C12.7439 16.5449 12.3725 17.0809 11.864 17.4623C11.3554 17.8437 10.7371 18.05 10.1015 18.05C9.46584 18.05 8.84746 17.8437 8.33891 17.4623C7.83037 17.0809 7.45905 16.5449 7.28027 15.9348C7.26115 15.8695 7.2513 15.8038 7.24997 15.7389H4.00001C3.71313 15.7389 3.45138 15.5752 3.32575 15.3173C3.20248 15.0643 3.23145 14.764 3.39963 14.5394C3.40133 14.5369 3.40486 14.5316 3.41004 14.5235C3.42459 14.5005 3.45231 14.4542 3.48918 14.3812C3.56285 14.2352 3.67358 13.9813 3.78854 13.5917C4.01863 12.812 4.26574 11.4886 4.26574 9.4023C4.26574 7.85644 4.87984 6.37389 5.97293 5.28079C6.865 4.38872 8.01646 3.81567 9.25004 3.63507V2.79999C9.25004 2.38577 9.58582 2.04999 10 2.04999ZM8.80705 15.7389C8.90698 15.9443 9.05465 16.1241 9.2389 16.2623C9.488 16.4491 9.79062 16.55 10.1015 16.55C10.4123 16.55 10.7149 16.4491 10.964 16.2623C11.1483 16.1241 11.2959 15.9443 11.3959 15.7389H8.80705ZM7.03359 6.34145C7.84538 5.52967 8.9464 5.07361 10.0944 5.07361C11.2425 5.07361 12.3435 5.52967 13.1553 6.34145C13.9671 7.15324 14.4231 8.25426 14.4231 9.4023C14.4231 11.8353 14.6814 13.3144 14.9661 14.2117L14.9748 14.2389H5.15815C5.18119 14.1682 5.20426 14.0941 5.22721 14.0163C5.50499 13.075 5.76574 11.6052 5.76574 9.4023C5.76574 8.25426 6.2218 7.15324 7.03359 6.34145Z" fill="currentColor"></path>
+      </svg>
+      <span dir="ltr" style="position:absolute;top:2px;inset-inline-start:2px;unicode-bidi:isolate;display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 3px;border-radius:var(--border-radius-16);background:var(--negative-color);color:var(--fixed-light-color);font-size:10px;line-height:1;font-variant-numeric:tabular-nums">4</span>
+    </a>
+
+    <a href="MeshekOS%20Auth.dc.html" title="יעל לביא · יציאה" aria-label="יעל לביא, יציאה" style="text-decoration:none">
+      <span style="height:28px;width:28px;box-sizing:border-box;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:var(--color-dark_purple);color:var(--text-color-on-inverted);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:21px;letter-spacing:-0.5px;margin-top:1px">יל</span>
+    </a>
   </div>
 </nav>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:250,&quot;height&quot;:700},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;board&quot;,&quot;meetings&quot;,&quot;transcribe&quot;,&quot;review&quot;,&quot;form&quot;],&quot;default&quot;:&quot;board&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
-const NAV = [
-  {id:"board",    label:"לוח סקירה",           href:"MeshekOS%20Board%20v3.dc.html"},
-  {id:"meetings", label:"ישיבות ופרוטוקולים",  href:"MeshekOS%20Meetings.dc.html"},
-  {id:"transcribe", label:"תמלול ישיבה",       href:"MeshekOS%20Transcription.dc.html"},
-  {id:"review",   label:"סקירה מפוצלת",        href:"MeshekOS%20Review%20Split.dc.html"},
-  {id:"form",     label:"פריט חדש",            href:"MeshekOS%20Governed%20Form.dc.html"},
-  {id:"tasks",    label:"משימות",              href:null},
-  {id:"docs",     label:"מסמכים וידע",         href:null}
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:88,&quot;height&quot;:760},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;board&quot;,&quot;meetings&quot;,&quot;transcribe&quot;,&quot;review&quot;,&quot;form&quot;,&quot;docs&quot;,&quot;ask&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const GROUPS = [
+  {divider:false, items:[
+    {id:"home",  label:"בית",     title:"לוח בית",            href:"MeshekOS%20Home.dc.html"},
+    {id:"board", label:"סקירה",   title:"לוח סקירה",          href:"MeshekOS%20Board%20v3.dc.html"},
+    {id:"review",label:"הכרעה",   title:"סקירה מפוצלת",       href:"MeshekOS%20Review%20Split.dc.html"}
+  ]},
+  {divider:true, items:[
+    {id:"meetings",   label:"ישיבות", title:"ישיבות ופרוטוקולים", href:"MeshekOS%20Meetings.dc.html"},
+    {id:"transcribe", label:"תמלול",  title:"תמלול ישיבה",        href:"MeshekOS%20Transcription.dc.html"}
+  ]},
+  {divider:true, items:[
+    {id:"docs", label:"מסמכים",  title:"מסמכים וידע", href:"MeshekOS%20Documents.dc.html"},
+    {id:"ask",  label:"MeshekAI", title:"MeshekAI",   href:"MeshekOS%20Ask.dc.html"}
+  ]},
+  {divider:true, items:[
+    {id:"form",  label:"חדש",     title:"פריט חדש", href:"MeshekOS%20Governed%20Form.dc.html"},
+    {id:"tasks", label:"משימות",  title:"משימות — בקרוב", href:null}
+  ]}
 ];
 
 class Component extends DCLogic {
   renderVals() {
-    const cur = this.props.current || "board";
+    const cur = this.props.current || "home";
     return {
-      navItems: NAV.map(n => {
-        const isCur = n.id === cur;
-        return {
-          label: n.label,
-          href: n.href || "#",
-          current: isCur ? "page" : null,
-          weight: isCur ? "600" : "400",
-          color: n.href ? "var(--primary-text-color)" : "var(--secondary-text-color)",
-          bg: isCur ? "var(--primary-selected-color)" : "transparent",
-          cursor: n.href ? "pointer" : "default",
-          soon: !n.href
-        };
-      })
+      groups: GROUPS.map(g => ({
+        divider: g.divider,
+        items: g.items.map(n => {
+          const on = n.id === cur;
+          return {
+            label: n.label,
+            title: n.title,
+            href: n.href || "#",
+            current: on ? "page" : null,
+            weight: on ? "600" : "400",
+            color: n.href ? "var(--primary-text-color)" : "var(--secondary-text-color)",
+            cursor: n.href ? "pointer" : "default",
+            iconBg: on ? "var(--primary-selected-color)" : "transparent",
+            iconColor: on ? "var(--primary-color)" : (n.href ? "var(--icon-color)" : "var(--color-wolf_gray)"),
+            isHome: n.id === "home",
+            isBoard: n.id === "board",
+            isMeetings: n.id === "meetings",
+            isTranscribe: n.id === "transcribe",
+            isReview: n.id === "review",
+            isForm: n.id === "form",
+            isDocs: n.id === "docs",
+            isAsk: n.id === "ask",
+            isTasks: n.id === "tasks"
+          };
+        })
+      }))
     };
   }
 }
