@@ -23,6 +23,8 @@ button,select,input,textarea{font-family:inherit}
 :focus{outline:none}
 :focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
 ::selection{background:var(--primary-selected-color)}
+input[type="checkbox"]:focus-visible + span{outline:2px solid var(--primary-color);outline-offset:2px}
+input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color) !important;border-color:transparent !important}
 @media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
 </style>
 </helmet>
@@ -38,9 +40,9 @@ button,select,input,textarea{font-family:inherit}
         <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">הנהלת הקהילה · 26.08.2026, 20:00 · חדר הישיבות</div>
       </div>
 
-      <div role="group" aria-label="מצב עבודה" style="display:flex;border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);overflow:hidden;margin-inline-start:var(--space-8)">
+      <div role="group" aria-label="מצב עבודה" style="display:flex;align-items:center;justify-content:center;margin-inline-start:var(--space-8)">
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
-          <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.pressed }}" style="background:{{ m.bg }};color:var(--primary-text-color);border:0;height:32px;padding:0 var(--space-12);font:{{ m.font }};cursor:pointer">{{ m.label }}</button>
+          <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.pressed }}" style="background:{{ m.bg }};color:var(--primary-text-color);border-style:solid;border-color:{{ m.borderColor }};border-block-width:1px;border-inline-start-width:{{ m.startW }};border-inline-end-width:{{ m.endW }};border-start-start-radius:{{ m.ssR }};border-end-start-radius:{{ m.esR }};border-start-end-radius:{{ m.seR }};border-end-end-radius:{{ m.eeR }};height:32px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:{{ m.hoverBg }}">{{ m.label }}</button>
         </sc-for>
       </div>
 
@@ -71,11 +73,14 @@ button,select,input,textarea{font-family:inherit}
                 <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0 0 var(--space-12);max-width:62ch">חבר שמסרב מתומלל כרגיל, וליד הקטעים שלו מופיע סימון סירוב. הסימון נשמר ביומן הביקורת ואינו מופיע בפרוטוקול המפורסם.</p>
                 <div style="display:flex;flex-direction:column;gap:var(--space-8)">
                   <sc-for list="{{ members }}" as="p" hint-placeholder-count="7">
-                    <label style="display:flex;align-items:center;gap:var(--space-8);font:var(--font-text2-normal);cursor:pointer">
-                      <input type="checkbox" checked="{{ p.refused }}" onChange="{{ p.onToggleRefuse }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
-                      <span style="width:24px;height:24px;border-radius:50%;background:{{ p.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ p.initials }}</span>
+                    <label style="position:relative;display:flex;align-items:center;font:var(--font-text2-normal);cursor:pointer">
+                      <input type="checkbox" checked="{{ p.refused }}" onChange="{{ p.onToggleRefuse }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
+                      <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ p.refBorder }};border-radius:2px;background:{{ p.refBg }};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform var(--motion-productive-short) var(--motion-timing-enter)"><svg viewBox="0 0 20 20" fill="none" style="width:100%;visibility:{{ p.refCheck }};color:var(--text-color-on-primary)"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path></svg></span>
+                      <span style="margin-inline-start:var(--space-8);user-select:none;display:flex;align-items:center;gap:var(--space-8)">
+                      <span style="height:20px;width:20px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ p.bg }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ p.initials }}</span>
                       <span>{{ p.name }}</span>
                       <span style="color:var(--secondary-text-color);font:var(--font-text3-normal)">{{ p.roleLabel }}</span>
+                      </span>
                     </label>
                   </sc-for>
                 </div>
@@ -139,7 +144,7 @@ button,select,input,textarea{font-family:inherit}
                     <div style="width:82px;flex:none;display:flex;flex-direction:column;gap:2px;align-items:flex-start">
                       <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--secondary-text-color)">{{ sg.at }}</span>
                       <span style="display:flex;align-items:center;gap:var(--space-4)">
-                        <span style="width:22px;height:22px;border-radius:50%;background:{{ sg.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ sg.initials }}</span>
+                        <span style="height:20px;width:20px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ sg.bg }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ sg.initials }}</span>
                       </span>
                     </div>
                     <div style="flex:1;min-width:0">
@@ -173,13 +178,16 @@ button,select,input,textarea{font-family:inherit}
                 </div>
                 <div style="display:flex;flex-direction:column;gap:var(--space-4)">
                   <sc-for list="{{ members }}" as="p" hint-placeholder-count="7">
-                    <label style="display:flex;align-items:center;gap:var(--space-8);font:var(--font-text2-normal);cursor:pointer">
-                      <input type="checkbox" checked="{{ p.present }}" onChange="{{ p.onTogglePresent }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
-                      <span style="width:22px;height:22px;border-radius:50%;background:{{ p.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ p.initials }}</span>
+                    <label style="position:relative;display:flex;align-items:center;font:var(--font-text2-normal);cursor:pointer">
+                      <input type="checkbox" checked="{{ p.present }}" onChange="{{ p.onTogglePresent }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
+                      <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ p.presBorder }};border-radius:2px;background:{{ p.presBg }};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform var(--motion-productive-short) var(--motion-timing-enter)"><svg viewBox="0 0 20 20" fill="none" style="width:100%;visibility:{{ p.presCheck }};color:var(--text-color-on-primary)"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path></svg></span>
+                      <span style="margin-inline-start:var(--space-8);user-select:none;display:flex;align-items:center;gap:var(--space-8);min-width:0">
+                      <span style="height:20px;width:20px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ p.bg }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ p.initials }}</span>
                       <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
                       <sc-if value="{{ p.refused }}" hint-placeholder-val="{{ false }}">
                         <span title="סירב להקלטה" style="margin-inline-start:auto;font:var(--font-text3-normal);color:var(--negative-color)">סירוב</span>
                       </sc-if>
+                      </span>
                     </label>
                   </sc-for>
                 </div>
@@ -236,8 +244,8 @@ button,select,input,textarea{font-family:inherit}
         <sc-if value="{{ processing }}" hint-placeholder-val="{{ false }}">
           <div aria-live="polite" style="max-width:620px;background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-24)">
             <h2 style="font:var(--font-text1-medium);margin-bottom:var(--space-8)">מתמלל…</h2>
-            <div style="height:8px;background:var(--ui-background-color);border-radius:var(--border-radius-4);overflow:hidden;margin-bottom:var(--space-8)">
-              <span style="display:block;height:8px;width:{{ progress }};background:var(--primary-color);transition:width var(--motion-expressive-short) var(--motion-timing-enter)"></span>
+            <div style="position:relative;width:100%;height:8px;line-height:8px;background:var(--ui-background-color);border-radius:var(--border-radius-small);margin-bottom:var(--space-8)">
+              <span style="display:block;height:8px;width:{{ progress }};background:var(--primary-color);border-radius:var(--border-radius-small);transition:width var(--motion-expressive-short) var(--motion-timing-enter)"></span>
             </div>
             <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0">{{ progressNote }}</p>
           </div>
@@ -341,6 +349,26 @@ const VOTE_OPTS = [
   {key:"abstain", short:"נמנע", title:"נמנע", color:"var(--secondary-text-color)", sel:"var(--ui-background-color)"}
 ];
 
+const CB = on => ({
+  check: on ? "visible" : "hidden",
+  border: on ? "transparent" : "var(--ui-border-color)",
+  bg: on ? "var(--primary-color)" : "var(--secondary-background-color)"
+});
+
+const SEG = (label, active, i, n, onPick) => ({
+  label, pressed: active,
+  bg: active ? "var(--primary-selected-color)" : "var(--primary-background-color)",
+  hoverBg: active ? "var(--primary-selected-color)" : "var(--primary-background-hover-color)",
+  borderColor: active ? "var(--primary-color)" : "var(--ui-border-color)",
+  startW: (i === 0 || active) ? "1px" : "0",
+  endW: (i === n - 1 || active) ? "1px" : "0",
+  ssR: i === 0 ? "var(--border-radius-small)" : "0",
+  esR: i === 0 ? "var(--border-radius-small)" : "0",
+  seR: i === n - 1 ? "var(--border-radius-small)" : "0",
+  eeR: i === n - 1 ? "var(--border-radius-small)" : "0",
+  onPick
+});
+
 class Component extends DCLogic {
   state = {
     mode:"live", consented:false, recording:false, revealed:0, elapsed:0,
@@ -384,12 +412,8 @@ class Component extends DCLogic {
 
     return {
       modes: [
-        {label:"בזמן אמת", pressed: live, bg: live ? "var(--primary-selected-color)" : "transparent",
-         font: live ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
-         onPick: () => this.setState({mode:"live"})},
-        {label:"אחרי הישיבה", pressed: !live, bg: !live ? "var(--primary-selected-color)" : "transparent",
-         font: !live ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
-         onPick: () => this.setState({mode:"post"})}
+        SEG("בזמן אמת", live, 0, 2, () => this.setState({mode:"live"})),
+        SEG("אחרי הישיבה", !live, 1, 2, () => this.setState({mode:"post"}))
       ],
       isLive: live,
       isPost: !live,
@@ -411,6 +435,12 @@ class Component extends DCLogic {
         name: m.name, initials: m.initials, bg: m.bg, roleLabel: m.role,
         refused: !!s.refused[m.name],
         present: !!s.present[m.name],
+        refCheck: CB(!!s.refused[m.name]).check,
+        refBorder: CB(!!s.refused[m.name]).border,
+        refBg: CB(!!s.refused[m.name]).bg,
+        presCheck: CB(!!s.present[m.name]).check,
+        presBorder: CB(!!s.present[m.name]).border,
+        presBg: CB(!!s.present[m.name]).bg,
         onToggleRefuse: () => this.setState(st => {
           const n = {...st.refused};
           if (n[m.name]) delete n[m.name]; else n[m.name] = true;

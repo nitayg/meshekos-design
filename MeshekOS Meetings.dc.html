@@ -51,9 +51,9 @@ button,select,input{font-family:inherit}
   <div style="display:grid;grid-template-columns:320px minmax(0,1fr);align-items:start">
 
     <aside aria-label="רשימת ישיבות" style="background:var(--primary-background-color);border-inline-start:1px solid var(--layout-border-color);min-height:calc(100vh - 59px);box-sizing:border-box;padding:var(--space-16) var(--space-12);display:flex;flex-direction:column;gap:var(--space-12)">
-      <div role="group" aria-label="סינון ישיבות" style="display:flex;border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);overflow:hidden">
+      <div role="group" aria-label="סינון ישיבות" style="display:flex;align-items:center">
         <sc-for list="{{ scopes }}" as="s" hint-placeholder-count="2">
-          <button type="button" onClick="{{ s.onPick }}" aria-pressed="{{ s.pressed }}" style="flex:1;background:{{ s.bg }};color:{{ s.fg }};border:0;height:32px;font:var(--font-text2-normal);cursor:pointer">{{ s.label }}</button>
+          <button type="button" onClick="{{ s.onPick }}" aria-pressed="{{ s.pressed }}" style="flex:1;background:{{ s.bg }};color:var(--primary-text-color);border-style:solid;border-color:{{ s.borderColor }};border-block-width:1px;border-inline-start-width:{{ s.startW }};border-inline-end-width:{{ s.endW }};border-start-start-radius:{{ s.ssR }};border-end-start-radius:{{ s.esR }};border-start-end-radius:{{ s.seR }};border-end-end-radius:{{ s.eeR }};height:32px;font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:{{ s.hoverBg }}">{{ s.label }}</button>
         </sc-for>
       </div>
 
@@ -93,7 +93,7 @@ button,select,input{font-family:inherit}
           </div>
           <div style="margin-top:var(--space-8);display:flex;gap:var(--space-4);flex-wrap:wrap">
             <sc-for list="{{ meeting.attendees }}" as="a" hint-placeholder-count="6">
-              <span title="{{ a.title }}" style="width:26px;height:26px;border-radius:50%;background:{{ a.bg }};color:{{ a.fg }};display:grid;place-items:center;font:var(--font-text3-normal);border:1px solid var(--layout-border-color)">{{ a.initials }}</span>
+              <span title="{{ a.title }}" style="height:28px;width:28px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ a.bg }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:21px;letter-spacing:-0.5px;margin-top:1px">{{ a.initials }}</span>
             </sc-for>
           </div>
         </div>
@@ -422,6 +422,20 @@ const AGENDA_STATE = {
   "טרם נדון": {bg:"var(--ui-background-color)",     fg:"var(--secondary-text-color)"}
 };
 
+const SEG = (label, active, i, n, onPick) => ({
+  label, pressed: active,
+  bg: active ? "var(--primary-selected-color)" : "var(--primary-background-color)",
+  hoverBg: active ? "var(--primary-selected-color)" : "var(--primary-background-hover-color)",
+  borderColor: active ? "var(--primary-color)" : "var(--ui-border-color)",
+  startW: (i === 0 || active) ? "1px" : "0",
+  endW: (i === n - 1 || active) ? "1px" : "0",
+  ssR: i === 0 ? "var(--border-radius-small)" : "0",
+  esR: i === 0 ? "var(--border-radius-small)" : "0",
+  seR: i === n - 1 ? "var(--border-radius-small)" : "0",
+  eeR: i === n - 1 ? "var(--border-radius-small)" : "0",
+  onPick
+});
+
 class Component extends DCLogic {
   state = {bodyId:"mgmt", meetingId:"m1", scope:"past", tab:"agenda", protoReason:"", approvedIds:{}};
 
@@ -472,12 +486,8 @@ class Component extends DCLogic {
       },
 
       scopes: [
-        {label:"התכנסו", key:"past", pressed: s.scope === "past",
-         bg: s.scope === "past" ? "var(--primary-selected-color)" : "transparent",
-         fg: "var(--primary-text-color)", onPick: () => this.pickScope("past")},
-        {label:"מתוכננות", key:"upcoming", pressed: s.scope === "upcoming",
-         bg: s.scope === "upcoming" ? "var(--primary-selected-color)" : "transparent",
-         fg: "var(--primary-text-color)", onPick: () => this.pickScope("upcoming")}
+        SEG("התכנסו", s.scope === "past", 0, 2, () => this.pickScope("past")),
+        SEG("מתוכננות", s.scope === "upcoming", 1, 2, () => this.pickScope("upcoming"))
       ],
 
       meetingList: this.visible().map(x => {

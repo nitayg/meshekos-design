@@ -23,6 +23,8 @@ button,select,input{font-family:inherit}
 :focus{outline:none}
 :focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
 ::selection{background:var(--primary-selected-color)}
+input[type="checkbox"]:focus-visible + span{outline:2px solid var(--primary-color);outline-offset:2px}
+input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color) !important;border-color:transparent !important}
 @media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
 </style>
 </helmet>
@@ -179,7 +181,12 @@ button,select,input{font-family:inherit}
                           <div style="width:6px;flex:none;background:{{ item.groupColor }}"></div>
 
                           <div style="width:40px;flex:none;display:grid;place-items:center;border-inline-start:1px solid var(--layout-border-color)">
-                            <input type="checkbox" aria-label="בחירת פריט" checked="{{ item.selected }}" onChange="{{ item.onSelect }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
+                            <label style="position:relative;display:flex;align-items:center;width:fit-content;cursor:pointer">
+                              <input type="checkbox" aria-label="בחירת פריט" checked="{{ item.selected }}" onChange="{{ item.onSelect }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
+                              <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ item.boxBorder }};border-radius:2px;background:{{ item.boxBg }};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform var(--motion-productive-short) var(--motion-timing-enter)">
+                                <svg viewBox="0 0 20 20" fill="none" style="width:100%;visibility:{{ item.boxCheck }};color:var(--text-color-on-primary)"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.53033 14.2478L8 13.7175L7.46967 14.2478C7.76256 14.5407 8.23744 14.5407 8.53033 14.2478ZM8 12.6569L4.53033 9.18718C4.23744 8.89429 3.76256 8.89429 3.46967 9.18718C3.17678 9.48008 3.17678 9.95495 3.46967 10.2478L7.46967 14.2478L8 13.7175L8.53033 14.2478L16.2478 6.53033C16.5407 6.23743 16.5407 5.76256 16.2478 5.46967C15.955 5.17677 15.4801 5.17677 15.1872 5.46967L8 12.6569Z" fill="currentColor"></path></svg>
+                              </span>
+                            </label>
                           </div>
 
                           <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-8)">
@@ -188,7 +195,7 @@ button,select,input{font-family:inherit}
                           </div>
 
                           <div style="width:130px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
-                            <span style="width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;color:#fff;background:{{ item.byColor }}">{{ item.initials }}</span>
+                            <span style="height:20px;width:20px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ item.byColor }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ item.initials }}</span>
                             <span style="font:var(--font-text3-normal);color:var(--secondary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ item.by }}</span>
                           </div>
 
@@ -442,6 +449,9 @@ class Component extends DCLogic {
       initials: who.initials,
       byColor: who.color,
       selected: !!s.selected[raw.ref],
+      boxCheck: s.selected[raw.ref] ? "visible" : "hidden",
+      boxBorder: s.selected[raw.ref] ? "transparent" : "var(--ui-border-color)",
+      boxBg: s.selected[raw.ref] ? "var(--primary-color)" : "var(--secondary-background-color)",
       onSelect: () => this.setState(st => {
         const next = {...st.selected};
         if (next[raw.ref]) delete next[raw.ref]; else next[raw.ref] = true;
