@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/broadsheet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Source+Code+Pro:wght@400;600&display=swap">
+<style>
+:root{
+  --font-body:"Frank Ruhl Libre","Source Serif 4",serif;
+  --font-heading:"Frank Ruhl Libre","Source Serif 4",serif;
+  --font-heading-weight:700;
+  --font-mono:"Source Code Pro",ui-monospace,monospace;
+}
+html{direction:rtl}
+body{font-family:var(--font-body);margin:0}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);letter-spacing:0}
+.table th{text-align:right}
+.table th,.table td{vertical-align:top}
+.seg-opt+.seg-opt{border-left:0;border-right:1px solid var(--color-divider)}
+.nav-brand{margin-right:0;margin-inline-end:auto}
+.dialog-actions{justify-content:flex-start}
+a:hover{color:var(--color-accent-700)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="max-width:1080px;padding:var(--space-8) var(--space-6) 120px;margin-inline-start:0;margin-inline-end:auto">
+
+  <div style="display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-8)">
+    <div style="display:flex;gap:var(--space-3);align-items:baseline;flex-wrap:wrap">
+      <span style="font-size:11px;letter-spacing:0.14em;color:var(--color-accent-700)">MESHEKOS · M-UX</span>
+      <span class="tag tag-accent-2">נתוני הדגמה בדיוניים</span>
+      <span style="font-size:11px;color:var(--color-neutral-700)">עיצוב ואפיון בלבד — ללא שינוי קוד צד־שרת</span>
+    </div>
+    <h1 style="font-size:52px;max-width:20ch;margin:0">יסודות הממשק</h1>
+    <p style="font-size:19px;max-width:58ch;color:var(--color-neutral-800);margin:var(--space-2) 0 0;text-wrap:pretty">מסמך פתיחה לבסיס הממשק של MeshekOS: מפת ארכיטקטורת מידע, שלושה כיוונים חזותיים, מלאי רכיבים, מטריצת מסכים ומצבים, והנחות שטרם אושרו. המקור הקובע להיקף הוא M-UX-T00 עד M-UX-T08.</p>
+    <div style="height:3px;background:var(--color-text);margin-top:var(--space-4)"></div>
+    <div style="height:1px;background:var(--color-text);margin-top:3px"></div>
+  </div>
+
+  <section style="margin-bottom:var(--space-8);padding-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">01 — ארכיטקטורת מידע</h6>
+    <h2 style="max-width:26ch">מה קיים במעטפת, ומה שייך למיילסטונים הבאים</h2>
+    <p style="max-width:60ch;color:var(--color-neutral-800)">M-UX מספק את המעטפת והפרימיטיבים בלבד. המסכים המסומנים <span style="color:var(--color-accent-2-700)">◆</span> הם תוצרים של מיילסטונים אחרים (M1B, M2–M7, M-OPS) ומופיעים כאן כדי לקבע את מקומם במפה, לא כדי להיבנות עכשיו.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-6);margin-top:var(--space-6)">
+
+      <div>
+        <div style="font-size:13px;font-weight:700;padding-bottom:var(--space-1);border-bottom:2px solid var(--color-text)">ציבורי — ללא הזדהות</div>
+        <ul style="list-style:none;padding:0;margin:var(--space-3) 0 0;display:flex;flex-direction:column;gap:var(--space-2);font-size:14px">
+          <li><span style="color:var(--color-accent-2-700)">◆</span> כניסה</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> אימות דו־שלבי (TOTP)</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> קוד שחזור חד־פעמי</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> רישום MFA לחשבון מורשה</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> איפוס סיסמה</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> גישה מוגבלת / חשבון מושבת</li>
+        </ul>
+        <p style="font-size:12px;color:var(--color-neutral-700);margin-top:var(--space-3)">כל אלה יושבים על <b>AuthLayout</b> אחד (M-UX-T04). המעטפת נותנת מסגרת, כותרת, אזור שגיאה ואזור עזרה — ולא מכונת מצבים.</p>
+      </div>
+
+      <div>
+        <div style="font-size:13px;font-weight:700;padding-bottom:var(--space-1);border-bottom:2px solid var(--color-text)">מעטפת מאומתת — כרומיום קבוע</div>
+        <ul style="list-style:none;padding:0;margin:var(--space-3) 0 0;display:flex;flex-direction:column;gap:var(--space-2);font-size:14px">
+          <li>בורר גוף פעיל — ברירת מחדל <b>כל הגופים</b></li>
+          <li>ניווט ראשי + דילוג לתוכן</li>
+          <li>חיפוש מילות מפתח וסינון</li>
+          <li>תיבת התראות דורסת</li>
+          <li>תפריט חשבון ויציאה</li>
+          <li>אזור הודעות חולפות (Toast)</li>
+        </ul>
+        <p style="font-size:12px;color:var(--color-neutral-700);margin-top:var(--space-3)">הבורר נשאר גלוי גם בתצוגות קריאה חוצות־גופים. פעולה מהותית מחייבת גוף מזוהה, ולכן היא חוסמת את עצמה כל עוד הבורר על <b>כל הגופים</b>.</p>
+      </div>
+
+      <div>
+        <div style="font-size:13px;font-weight:700;padding-bottom:var(--space-1);border-bottom:2px solid var(--color-text)">אזורי תוכן</div>
+        <ul style="list-style:none;padding:0;margin:var(--space-3) 0 0;display:flex;flex-direction:column;gap:var(--space-2);font-size:14px">
+          <li><span style="color:var(--color-accent-2-700)">◆</span> לוח בקרה — חמישה אזורים מוגדרים</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> ישיבות וסדר יום</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> פרוטוקולים — סקירה ואישור</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> החלטות</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> משימות ומעקב</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> מסמכים וידע</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> שאלות ותשובות עם אזכורי מקור</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> ניהול משתמשים והרשאות</li>
+          <li><span style="color:var(--color-accent-2-700)">◆</span> מצב מערכת ותמיכה</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-8);padding-top:var(--space-4);border-top:1px solid var(--color-divider)">
+      <div style="font-size:13px;font-weight:700;margin-bottom:var(--space-3)">גבולות ניתוב</div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3);font-size:13px;font-family:var(--font-mono)">
+        <span dir="ltr" style="unicode-bidi:isolate;background:var(--color-neutral-100);padding:4px 9px">/auth/*</span>
+        <span dir="ltr" style="unicode-bidi:isolate;background:var(--color-neutral-100);padding:4px 9px">/app/*</span>
+        <span dir="ltr" style="unicode-bidi:isolate;background:var(--color-neutral-100);padding:4px 9px">/app/bodies/:bodyId/*</span>
+        <span dir="ltr" style="unicode-bidi:isolate;background:var(--color-neutral-100);padding:4px 9px">/admin/*</span>
+        <span dir="ltr" style="unicode-bidi:isolate;background:var(--color-neutral-100);padding:4px 9px">*</span>
+      </div>
+      <p style="font-size:12px;color:var(--color-neutral-700);margin-top:var(--space-3);max-width:70ch">שמירת הניתוב בצד הלקוח היא חוויית משתמש בלבד. ההרשאה נקבעת בשרת, ולכן מסך יכול להיטען במלואו ואז להציג מצב <b>אין הרשאה</b> — זה מצב תקין ולא כשל.</p>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">02 — כיוונים חזותיים</h6>
+    <h2 style="max-width:26ch">שלושה כיוונים על אותם טוקנים</h2>
+    <p style="max-width:60ch;color:var(--color-neutral-800)">כל שלושת הכיוונים צורכים את אותה מערכת עיצוב (Broadsheet) ואת אותם צבעים ומרווחים. הם נחלקים על ארבעה צירים: צפיפות, קול טיפוגרפי, טיפול במשטחים, ומשקל הכרומיום. כל אחד מציג את אותו תוכן בדיוני כדי שההשוואה תהיה הוגנת.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:var(--space-4);margin-top:var(--space-6)">
+      <a href="Direction A — Newspaper.dc.html" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4);background:var(--color-neutral-100)">
+        <span style="font-size:11px;letter-spacing:0.12em;color:var(--color-accent-700)">כיוון א׳</span>
+        <span style="font-size:26px;font-weight:700">עיתון</span>
+        <span style="font-size:13px;color:var(--color-neutral-800)">כרומיום שקט, אפס מסגרות, סולם סריפי גדול, נשימה רחבה. ההיררכיה כולה מגודל ומרווח לבן.</span>
+        <span style="font-size:12px;color:var(--color-accent-700);margin-top:var(--space-2)">פתיחת הכיוון ←</span>
+      </a>
+      <a href="Direction B — Register.dc.html" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4);background:var(--color-neutral-100)">
+        <span style="font-size:11px;letter-spacing:0.12em;color:var(--color-accent-700)">כיוון ב׳</span>
+        <span style="font-size:26px;font-weight:700">פנקס</span>
+        <span style="font-size:13px;color:var(--color-neutral-800)">שורות רשומה מסורגלות בקווי שיער, ספרות טבלאיות, צפיפות בינונית, סולם מצומצם. קריא בסריקה מהירה של הרבה פריטים.</span>
+        <span style="font-size:12px;color:var(--color-accent-700);margin-top:var(--space-2)">פתיחת הכיוון ←</span>
+      </a>
+      <a href="Direction C — Console.dc.html" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4);background:var(--color-neutral-100)">
+        <span style="font-size:11px;letter-spacing:0.12em;color:var(--color-accent-700)">כיוון ג׳</span>
+        <span style="font-size:26px;font-weight:700">לוח בקרה</span>
+        <span style="font-size:13px;color:var(--color-neutral-800)">כרומיום כבד: מסילת ניווט קבועה בצד, צפיפות גבוהה, כרטיסים עם הגבהה קלה לפריטים בדידים.</span>
+        <span style="font-size:12px;color:var(--color-accent-700);margin-top:var(--space-2)">פתיחת הכיוון ←</span>
+      </a>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">03 — התנהגות דו־כיוונית</h6>
+    <h2 style="max-width:26ch">עברית עם תאריכים, מספרים ומזהים</h2>
+    <p style="max-width:62ch;color:var(--color-neutral-800)">מזהים, חתימות זמן, שמות קבצים וכתובות דואר מבודדים בבידוד דו־כיווני ומוגדרים בגופן טבלאי חד־רווח. משפט עברי אינו משנה סדר קריאה כשמוטמע בו מזהה לטיני, וסימני פיסוק בקצה מזהה נשארים במקומם.</p>
+
+    <div style="margin-top:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);max-width:78ch">
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-accent)">
+        <div style="font-size:11px;color:var(--color-neutral-700);margin-bottom:4px">מזהה משימה בתוך משפט</div>
+        <div style="font-size:16px">המשימה <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:0.92em">TSK-2026-0418</span> באיחור מאז <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:0.92em">12.06.2026</span>, ובאחריות נועה שחר.</div>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-accent)">
+        <div style="font-size:11px;color:var(--color-neutral-700);margin-bottom:4px">חתימת זמן ודובר בציטוט מקור</div>
+        <div style="font-size:16px">יעל לביא, <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:0.92em">00:41:07</span> — «נסגור את התקציב עד סוף החודש».</div>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-accent)">
+        <div style="font-size:11px;color:var(--color-neutral-700);margin-bottom:4px">שם קובץ, גרסה ודואר</div>
+        <div style="font-size:16px">המקור <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.92em">protokol-hinuch-v3.docx</span> הועלה בידי <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.92em">noa@example.test</span> (גרסה <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:0.92em">3</span>).</div>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-accent)">
+        <div style="font-size:11px;color:var(--color-neutral-700);margin-bottom:4px">טווח תאריכים כיחידה אחת</div>
+        <div style="font-size:16px">תקופת כיהון <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:0.92em">12.06.2026 – 18.09.2027</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-6);max-width:70ch">
+      <div style="font-size:13px;font-weight:700;margin-bottom:var(--space-2)">כללי היישום</div>
+      <ol style="font-size:14px;color:var(--color-neutral-800);padding-inline-start:1.4em;margin:0;display:flex;flex-direction:column;gap:var(--space-1)">
+        <li>כל מזהה נעטף ב־<span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">dir="ltr"</span> עם <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">unicode-bidi:isolate</span>, אף פעם לא באסימוני עיצוב בלבד.</li>
+        <li>פריסה מסתמכת רק על מאפיינים לוגיים — <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">inline-start/end</span>, לא <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">left/right</span>.</li>
+        <li>ספרות במצבים טבלאיים נעולות ל־<span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">tabular-nums</span> כדי שעמודות תאריך יתיישרו.</li>
+        <li>טווח — תאריכים, שעות או גרסאות — נעטף כיחידה אחת מבודדת, לא כשני מזהים נפרדים, כדי שהמפריד יישאר בתוך הרצף הלטיני.</li>
+        <li>קטע מקור ארוך מהתמלול נשאר בכיוון המקורי שלו ואינו מיושר מחדש לפי הממשק.</li>
+        <li>מראה LTR לבדיקות בלבד: החלפת <span dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono);font-size:0.9em">dir</span> בשורש, ללא מתג בממשק המשתמש.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">04 — מלאי רכיבים</h6>
+    <h2 style="max-width:30ch">מה נבנה, ובאחריות איזו משימה</h2>
+    <p style="max-width:60ch;color:var(--color-neutral-800)">הרכיבים אינם מכילים חוקי תחום ואינם קוראים לשרת. סמנטיקה מקורית מועדפת על שחזור נגיש של פקד קיים.</p>
+
+    <div style="overflow-x:auto;margin-top:var(--space-6)">
+      <table class="table" style="min-width:760px">
+        <caption style="text-align:right;font-size:12px;color:var(--color-neutral-700);padding-bottom:var(--space-2)">מלאי רכיבי היסוד לפי משימת M-UX</caption>
+        <thead>
+          <tr><th scope="col">רכיב</th><th scope="col">משימה</th><th scope="col">מצבים חייבים</th><th scope="col">הערת נגישות מחייבת</th></tr>
+        </thead>
+        <tbody style="font-size:13px">
+          <tr><td>אסימוני צבע, טיפוגרפיה, מרווח, נשימה</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T01</td><td>—</td><td>ניגודיות 4.5:1 לטקסט גוף; מיקוד נראה בכל מצב</td></tr>
+          <tr><td>נקודות שבירה וצפיפות סמנטית</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T01</td><td>—</td><td>זרימה מחדש ב־400% ללא גלילה דו־צירית</td></tr>
+          <tr><td>כפתור — ראשי, משני, רפאים, אייקון</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>מצוי, ריחוף, לחוץ, מיקוד, עסוק, מושבת</td><td>מצב עסוק מונע הפעלה כפולה ומוכרז</td></tr>
+          <tr><td>שדה טקסט, אזור טקסט, בורר</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>מצוי, מיקוד, שגיאה, קריאה, מושבת</td><td>תווית מקושרת; שגיאה מקושרת ב־describedby</td></tr>
+          <tr><td>תיבת סימון, רדיו, פקד מקטעים</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>מסומן, לא מסומן, מעורב, מושבת</td><td>קבוצה עם שם נגיש; חצים בתוך הקבוצה</td></tr>
+          <tr><td>תג מצב ותג סיווג</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>—</td><td>משמעות בטקסט, לא בצבע או צורה לבד</td></tr>
+          <tr><td>דו־שיח מודאלי</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>פתוח, נסגר, עסוק</td><td>לכידת מיקוד, החזרת מיקוד ליוזם, Esc</td></tr>
+          <tr><td>טבלה ורשימת נתונים</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T02</td><td>טעינה, ריק, מסונן ריק, שגיאה</td><td>כותרות עמודה מוגדרות; מצב מיון מוכרז</td></tr>
+          <tr><td>מעטפת אפליקציה ואזורי ציון דרך</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T03</td><td>טעינת מסלול, שגיאת מסלול</td><td>דילוג לתוכן; מיקוד לכותרת אחרי ניווט</td></tr>
+          <tr><td>בורר גוף פעיל</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T03</td><td>כל הגופים, גוף נבחר, גוף שהוסר</td><td>שינוי הבחירה מוכרז; לא בורר חובה לקריאה</td></tr>
+          <tr><td>ניווט ראשי ונתיב</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T03</td><td>פעיל, מכווץ, מגירה נייד</td><td>aria-current לעמוד הפעיל</td></tr>
+          <tr><td>AuthLayout</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T04</td><td>כותרת, עזרה, שגיאה, מצב, טעינה</td><td>שגיאה מוכרזת בלי הסעת מיקוד פתאומית</td></tr>
+          <tr><td>שדה מורכב עם עזרה ושגיאה</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T05</td><td>נקי, נבדק, שגיאת שדה, מאושר</td><td>הבחנה בין רמז לקוח לקביעת שרת</td></tr>
+          <tr><td>תקציר שגיאות טופס</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T05</td><td>ריק, שגיאה אחת, מרובה</td><td>מיקוד לתקציר; קישור לשדה הפוגע</td></tr>
+          <tr><td>הזנת קוד וסוד</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T05</td><td>ריק, חלקי, מלא, שגוי</td><td>הדבקה ומנהל סיסמאות אינם נחסמים</td></tr>
+          <tr><td>שורת פעולה עם שליחה א־סינכרונית</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T05</td><td>מצוי, שולח, הצליח, נכשל</td><td>קלט נשמר בכשל; אין שליחה כפולה</td></tr>
+          <tr><td>אישור פעולה מהותית</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T05</td><td>ממתין, מאשר, נדחה</td><td>הגוף הפעיל מוצג בתוך האישור עצמו</td></tr>
+          <tr><td>הודעה חולפת</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T06</td><td>מידע, הצלחה, אזהרה, שגיאה מתאוששת</td><td>אינה גונבת מיקוד; אינה העתק היחיד של הנחיה</td></tr>
+          <tr><td>מצבים ריקים</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T07</td><td>ריק ראשוני, ריק אחרי סינון</td><td>פעולה מוצעת רק אם היא מותרת בפועל</td></tr>
+          <tr><td>מצבי שגיאה נורמליזציה</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T07</td><td>401, 403, בוטלה, התנגשות, זמני, סופי</td><td>אינם מאשרים קיום משאב; ניסיון חוזר רק כשבטוח</td></tr>
+          <tr><td>גבול נתונים ובקשות</td><td dir="ltr" style="unicode-bidi:isolate;font-family:var(--font-mono)">T08</td><td>ממתין, הצליח, בוטל, מיושן</td><td>תשובה מיושנת אינה דורסת מצב חדש בממשק</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">05 — מטריצת מסך ומצב</h6>
+    <h2 style="max-width:30ch">איזה מצב מוגדר בכל משטח</h2>
+    <p style="max-width:62ch;color:var(--color-neutral-800)">כל תוצאה מנורמלת ממופה למצב אחד עמיד — לא להודעה חולפת. <b>מוגדר</b> = המשטח מגדיר מצב משלו. <b>יורש</b> = המצב מטופל ברמת המעטפת. <b>לא רלוונטי</b> = אינו יכול להתרחש במשטח זה.</p>
+
+    <div style="overflow-x:auto;margin-top:var(--space-6)">
+      <table class="table" style="min-width:900px;font-size:12px">
+        <caption style="text-align:right;font-size:12px;color:var(--color-neutral-700);padding-bottom:var(--space-2)">משטחי הבסיס מול תוצאות מנורמלות</caption>
+        <thead>
+          <tr>
+            <th scope="col" style="min-width:170px">משטח</th>
+            <th scope="col">טעינה</th>
+            <th scope="col">ריק</th>
+            <th scope="col">כשל זמני</th>
+            <th scope="col">401</th>
+            <th scope="col">403</th>
+            <th scope="col">גישה בוטלה</th>
+            <th scope="col">התנגשות</th>
+            <th scope="col">שגיאה סופית</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row" style="font-weight:400">מעטפת ומסילת ניווט</th><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">בורר גוף פעיל</th><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>יורש</td><td>לא רלוונטי</td><td>מוגדר</td><td>לא רלוונטי</td><td>יורש</td></tr>
+          <tr><th scope="row" style="font-weight:400">מסכי הזדהות</th><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">טופס ממשל כללי</th><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td><td>יורש</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">רשימה עם סינון</th><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>יורש</td><td>מוגדר</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">סקירה מפוצלת — חלונית מקור</th><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>יורש</td><td>מוגדר</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">סקירה מפוצלת — כרטיס טיוטה</th><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>יורש</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">תיבת התראות דורסת</th><td>מוגדר</td><td>מוגדר</td><td>מוגדר</td><td>יורש</td><td>לא רלוונטי</td><td>מוגדר</td><td>לא רלוונטי</td><td>מוגדר</td></tr>
+          <tr><th scope="row" style="font-weight:400">הודעה חולפת</th><td>לא רלוונטי</td><td>לא רלוונטי</td><td>מוגדר</td><td>לא רלוונטי</td><td>לא רלוונטי</td><td>לא רלוונטי</td><td>לא רלוונטי</td><td>לא רלוונטי</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:var(--space-6);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--space-4);max-width:100%">
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-text)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">401 מול 403</div>
+        <p style="font-size:13px;color:var(--color-neutral-800);margin:0">401 מוביל להזדהות מחדש. 403 נשאר בתוך המעטפת המאומתת ואינו מציע כניסה — אחרת המשתמש יחשוב שהוא נותק.</p>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-text)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">גישה בוטלה תוך שימוש</div>
+        <p style="font-size:13px;color:var(--color-neutral-800);margin:0">חלונית התוכן מוחלפת במצב עמיד. הניווט ושאר המעטפת נשארים שמישים. הגוף נעלם מהבורר בשליפה הבאה.</p>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-text)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">התנגשות עריכה</div>
+        <p style="font-size:13px;color:var(--color-neutral-800);margin:0">הכרטיס נעול, מציג מי שינה ומתי, ומציע ריענון לגרסה הנוכחית. אין מיזוג אוטומטי ואין דריסה שקטה.</p>
+      </div>
+      <div style="padding-inline-start:var(--space-3);border-inline-start:2px solid var(--color-text)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">שגיאה סופית</div>
+        <p style="font-size:13px;color:var(--color-neutral-800);margin:0">בלי ניסיון חוזר, בלי מלל ספק חיצוני, ועם מזהה מתאם שהמשתמש יכול להעביר לתמיכה.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-700);margin-bottom:var(--space-3)">06 — נגישות ותפעול</h6>
+    <h2 style="max-width:30ch">רף מוצהר, נבדק בכל משטח</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--space-4);margin-top:var(--space-4)">
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">רף</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">WCAG 2.2 AA. יעד ראשון 1280 רוחב, וכל משטח נשאר תקין עד 320 שקול.</p></div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">מקלדת</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">בסקירה המפוצלת חלונית הטיוטה מחזיקה את סדר הטאב. המקור מגיע דרך קישור «מעבר למקור» שמעביר מיקוד, וחזרה מחזירה אותו.</p></div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">קורא מסך</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">אזורי ציון דרך קבועים, כותרת עמוד מוכרזת אחרי ניווט, שגיאות באזור חי מנומס.</p></div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">מיקוד</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">טבעת מיקוד בעובי 2 עם ריווח, גלויה על כל רקע במערכת. לעולם לא מוסרת.</p></div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">תנועה מופחתת</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">מעברים נעלמים, לא מואטים. שינוי מצב נשאר קריא בלי אנימציה.</p></div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">מסך קטן</div><p style="font-size:13px;color:var(--color-neutral-800);margin:0">הסקירה עוברת לחלוניות עוקבות, שומרת התקדמות סקירה וניווט מקור־לטיוטה.</p></div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--space-8);margin-bottom:var(--space-8)">
+    <h6 style="color:var(--color-accent-2-700);margin-bottom:var(--space-3)">07 — הנחות</h6>
+    <h2 style="max-width:30ch">מה הנחתי כדי להתקדם</h2>
+    <p style="max-width:60ch;color:var(--color-neutral-800)">כל אחת מהן ניתנת להיפוך. אם אחת מהן שגויה, עדיף לתקן אותה עכשיו ולא אחרי שהפרימיטיבים נבנו.</p>
+    <ol style="max-width:74ch;font-size:14px;color:var(--color-neutral-800);padding-inline-start:1.5em;margin:var(--space-4) 0 0;display:flex;flex-direction:column;gap:var(--space-3)">
+      <li><b>גופן עברי — שלושה פנים, שלושה תפקידים.</b> Broadsheet מוגדר כולו ב־Source Serif 4, שאין לו כיסוי עברי, ולכן פיצלתי: <b>Frank Ruhl Libre</b> הוא הפנים העברי הראשי לכותרות ולגוף הטקסט — אותו קול סריפי; <b>Source Serif 4</b> נשאר גופן נסיגה לתווים לטיניים בתוך טקסט רץ, כדי לשמור על קול המערכת; <b>Source Code Pro</b> משמש רק למזהים, חתימות זמן, תאריכים ושמות קבצים, בספרות טבלאיות. זו בחירה חזותית שמחייבת אישור.</li>
+      <li><b>שיקוף הפריסה.</b> Broadsheet דוחף תוכן לקצה השמאלי עם נשימה מימין. שיקפתי את זה לוגית: התוכן נצמד לקצה הימני והנשימה עוברת לשמאל. לא שמרתי על יישור שמאלי פיזי.</li>
+      <li><b>ללא מסגרות לפריסה.</b> המערכת אוסרת קופסאות וקווים מפרידים כמבנה עמוד. לכן טבלאות וכרטיסים מופיעים רק לפריטים בדידים באמת, וחלוקת אזורים נעשית במרווח לבן.</li>
+      <li><b>הבורר אינו הרשאה.</b> בורר הגוף הפעיל הוא הקשר לפעולה, לא מקור הרשאה. השרת נשאר הקובע, וייתכן שפעולה תיחסם אחרי שהבורר כבר הוצב.</li>
+      <li><b>אין המצאת נתיבי API.</b> שמות המסלולים במסמך הם ממשק דפדפן בלבד ולא מרמזים על מבנה נקודות קצה.</li>
+      <li><b>מראה LTR לבדיקות בלבד.</b> אין מתג שפה בממשק בפיילוט.</li>
+      <li><b>אין ספירת אייקונים.</b> המערכת מפנה ל־Phosphor במשקל duotone. לא ציירתי אייקונים; במקומות שדרוש סמל השארתי מקום מסומן.</li>
+      <li><b>עדיפות מסך.</b> 1280 הוא יעד העיצוב הראשון, לא רזולוציית מינימום.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h6 style="color:var(--color-accent-2-700);margin-bottom:var(--space-3)">08 — שאלות פתוחות</h6>
+    <h2 style="max-width:30ch">מה שאני צריך ממך או מהמסמכים</h2>
+    <p style="max-width:60ch;color:var(--color-neutral-800)">אלה שאלות מוצר, לא החלטות מימוש. חלקן פתוחות במסמכי המוצר עצמם.</p>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);margin-top:var(--space-4);max-width:76ch">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q1</span><div><div style="font-weight:700;font-size:15px">קטגוריות אי־ודאות</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">Design §16 משאיר את הקטגוריות האיכותיות ואת טקסונומיית הסיבות פתוחות. אני צריך את הרשימה המדויקת לפני שאעצב כרטיס סקירה — כמה רמות, ובאיזה מלל.</p></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q2</span><div><div style="font-weight:700;font-size:15px">מוסכמות שגיאה ב־REST</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">מעטפת השגיאה, ייצוג התנגשות והאידמפוטנטיות טרם נקבעו (M-UX-T00/Design §16). המיפוי ממצב שרת למצב מסך יישאר בהנחה עד שייקבעו.</p></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q3</span><div><div style="font-weight:700;font-size:15px">מלל תמיכה בפיילוט</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">מצב שגיאה סופית אמור להציע נתיב תמיכה. איני ממציא ערוץ. מה המלל והנתיב המאושרים?</p></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q4</span><div><div style="font-weight:700;font-size:15px">שמות הגופים בפועל</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">אורך שם הגוף משפיע ישירות על הבורר במעטפת. השמות הבדיוניים כאן קצרים; שמות אמיתיים ארוכים יותר ישנו את הפריסה.</p></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q5</span><div><div style="font-weight:700;font-size:15px">ועדה רגישה</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">האם גוף מוגבל צריך להיעדר מהבורר לגמרי, או להופיע כלא־זמין? השנייה מאשרת קיום, ולכן ברירת המחדל שלי היא היעלמות מלאה.</p></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:baseline"><span class="tag tag-accent-2">Q6</span><div><div style="font-weight:700;font-size:15px">מלל הודעות בעברית</div><p style="font-size:13px;color:var(--color-neutral-800);margin:4px 0 0">האם יש מקור מלל מאושר, או שהמלל כאן הוא הצעה? כרגע כתבתי ישיר ועניני, בלי לשון פנייה רשמית.</p></div></div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>

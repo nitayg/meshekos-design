@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--primary-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--primary-background-color)">
+
+  <a href="#main" style="position:absolute;inset-inline-start:-9999px;top:8px;background:var(--inverted-color-background);color:#fff;padding:8px 14px;border-radius:var(--border-radius-4);z-index:30">דילוג לתוכן</a>
+
+  <div style="display:grid;grid-template-columns:250px minmax(0,1fr);align-items:start">
+
+    <dc-import name="Rail" current="board" hint-size="250px,100vh"></dc-import>
+
+    <main id="main" style="padding:0 0 var(--space-64);min-width:0">
+
+      <sc-if value="{{ revoked }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:var(--space-32);max-width:560px">
+          <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-32)">
+            <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--negative-color-selected);color:#7a1424;font:var(--font-text2-normal);margin-bottom:var(--space-16)">גישה בוטלה</span>
+            <h1 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold);margin-bottom:var(--space-12)">ההרשאה שלך ל{{ bodyName }} הוסרה</h1>
+            <p style="font:var(--font-text1-normal);color:var(--secondary-text-color);margin:0 0 var(--space-12)">אינך מנותקת מהמערכת ואינך צריכה להזדהות שוב. הניווט ושאר הגופים נשארים זמינים.</p>
+            <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-24)">ההסרה בוצעה ב<span dir="ltr" style="unicode-bidi:isolate;font-variant-numeric:tabular-nums">02.08.2026</span> בידי ועדת ביקורת.</p>
+            <button type="button" onClick="{{ onBackToDefault }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);padding:var(--space-4) var(--space-8);height:32px;line-height:24px;font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">חזרה להנהלת הקהילה</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ granted }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="padding:var(--space-16) var(--space-24) 0;display:flex;align-items:center;gap:var(--space-12);flex-wrap:wrap">
+            <h1 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold)">{{ bodyName }}</h1>
+            <span style="font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ bodyMeta }}</span>
+            <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-8)">
+              <label for="body-switch" style="font:var(--font-text2-normal);color:var(--secondary-text-color)">גוף פעיל</label>
+              <select id="body-switch" value="{{ bodyId }}" onChange="{{ onBodyChange }}" style="font:var(--font-text2-medium);color:var(--primary-text-color);background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="4">
+                  <option value="{{ b.id }}">{{ b.name }}</option>
+                </sc-for>
+              </select>
+            </div>
+          </div>
+
+          <sc-if value="{{ showPermissionPanel }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:var(--space-8) var(--space-24) 0;display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+              <span style="font:var(--font-text2-normal)"><b style="font-weight:600">{{ roleLabel }}</b></span>
+              <sc-for list="{{ capabilities }}" as="c" hint-placeholder-count="3">
+                <span style="display:flex;align-items:center;gap:var(--space-4);font:var(--font-text3-normal);color:var(--secondary-text-color)">
+                  <span style="width:16px;height:16px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;line-height:1;color:#fff;background:{{ c.markBg }}">{{ c.mark }}</span>
+                  <span>{{ c.label }}</span>
+                  <span>· {{ c.state }}</span>
+                </span>
+              </sc-for>
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ bodyHint }}</span>
+            </div>
+          </sc-if>
+
+          <div style="padding:0 var(--space-24);display:flex;gap:var(--space-16);border-bottom:1px solid var(--layout-border-color);margin-top:var(--space-12)">
+            <span style="padding:var(--space-8) var(--space-4);font:var(--font-text2-medium);border-bottom:2px solid var(--primary-color);margin-bottom:-1px">תור סקירה</span>
+            <span style="padding:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--secondary-text-color)">החלטות</span>
+            <span style="padding:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--secondary-text-color)">משימות</span>
+          </div>
+
+          <div style="padding:var(--space-12) var(--space-24);display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+            <a href="MeshekOS%20Governed%20Form.dc.html" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);padding:var(--space-4) var(--space-8);height:32px;line-height:24px;font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer" style-hover="background:var(--primary-hover-color);text-decoration:none">פריט חדש</a>
+            <span style="width:1px;height:20px;background:var(--layout-border-color);margin-inline:var(--space-4)"></span>
+
+            <input id="q" type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="חיפוש בפריטים" aria-label="חיפוש בפריטים" style="width:200px;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+
+            <select aria-label="סינון לפי נרשם בידי" value="{{ owner }}" onChange="{{ onOwner }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+              <option value="">כל מי שרשם</option>
+              <sc-for list="{{ owners }}" as="o" hint-placeholder-count="4">
+                <option value="{{ o }}">{{ o }}</option>
+              </sc-for>
+            </select>
+
+            <select aria-label="סינון לפי מצב אי-ודאות" value="{{ cat }}" onChange="{{ onCat }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+              <option value="">כל מצבי אי-ודאות</option>
+              <sc-for list="{{ cats }}" as="c" hint-placeholder-count="7">
+                <option value="{{ c }}">{{ c }}</option>
+              </sc-for>
+            </select>
+
+            <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+              <span style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                <sc-for list="{{ activeFilters }}" as="a" hint-placeholder-count="2">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--border-radius-4);padding:0 var(--space-8);background:var(--primary-selected-color);color:var(--primary-text-color);font:var(--font-text2-normal)">{{ a.label }}</span>
+                </sc-for>
+                <button type="button" onClick="{{ onClearFilters }}" style="background:transparent;color:var(--primary-color);border:0;border-radius:var(--border-radius-small);padding:var(--space-4) var(--space-8);height:32px;line-height:24px;font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">ניקוי סינון</button>
+              </span>
+            </sc-if>
+
+            <span style="margin-inline-start:auto;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ resultLabel }}</span>
+          </div>
+
+          <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 var(--space-24) var(--space-12);background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);box-shadow:var(--box-shadow-xs);padding:var(--space-8) var(--space-16);display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+              <span dir="ltr" style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);unicode-bidi:isolate;background:var(--primary-color);color:var(--fixed-light-color);font:var(--font-text2-normal);font-variant-numeric:tabular-nums">{{ selectedCount }}</span>
+              <span style="font:var(--font-text2-normal)">פריטים נבחרו</span>
+              <span style="color:var(--secondary-text-color);font:var(--font-text3-normal)">הכרעה מרובה תבקש נימוק אחד לכל הפריטים</span>
+              <button type="button" onClick="{{ onClearSelection }}" style="margin-inline-start:auto;background:transparent;border:0;color:var(--secondary-text-color);font:var(--font-text2-normal);cursor:pointer;padding:var(--space-4) var(--space-8)" style-hover="color:var(--primary-text-color)">ביטול בחירה</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+            <div aria-live="polite" style="padding:0 var(--space-24)">
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">טוען את רשומת הגוף…</span>
+              <div style="margin-top:var(--space-8);display:flex;flex-direction:column;gap:1px">
+                <sc-for list="{{ skeletonRows }}" as="sk" hint-placeholder-count="5">
+                  <div style="height:36px;background:var(--allgrey-background-color);border-bottom:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-12);padding-inline:var(--space-12)">
+                    <span style="width:6px;height:36px;background:var(--ui-background-color)"></span>
+                    <span style="height:12px;width:{{ sk.w1 }};background:var(--ui-background-color);border-radius:2px"></span>
+                    <span style="height:12px;width:{{ sk.w2 }};background:var(--ui-background-color);border-radius:2px"></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 var(--space-24);background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-32);text-align:center">
+              <h3 style="font:var(--font-h3-bold);margin-bottom:var(--space-8)">{{ emptyTitle }}</h3>
+              <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 auto var(--space-16);max-width:52ch">{{ emptyBody }}</p>
+              <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ onClearFilters }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">ניקוי הסינון</button>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <div style="padding:0 var(--space-24);overflow-x:auto">
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+              <section style="margin-bottom:var(--space-32);min-width:1090px">
+
+                <div style="display:flex;align-items:center;gap:var(--space-8);margin-bottom:var(--space-4)">
+                  <button type="button" onClick="{{ g.onToggle }}" aria-expanded="{{ g.expanded }}" style="background:transparent;border:0;cursor:pointer;color:{{ g.color }};width:24px;height:24px;display:grid;place-items:center;border-radius:var(--border-radius-4);font-size:11px;transform:rotate({{ g.caretRotate }});transition:transform var(--motion-productive-medium) var(--motion-timing-transition)" style-hover="background:var(--primary-background-hover-color)">▼</button>
+                  <h2 style="font:var(--font-h3-bold);color:{{ g.color }}">{{ g.title }}</h2>
+                  <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ g.count }} פריטים</span>
+                </div>
+
+                <sc-if value="{{ g.expanded }}" hint-placeholder-val="{{ true }}">
+                  <div>
+                    <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--layout-border-color);font:var(--font-text2-normal);color:var(--secondary-text-color)">
+                      <div style="width:6px;flex:none"></div>
+                      <div style="width:40px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="flex:1;min-width:240px;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">פריט</div>
+                      <div style="width:130px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">נרשם בידי</div>
+                      <div style="width:190px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב אי-ודאות</div>
+                      <div style="width:210px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">השדה שבמחלוקת</div>
+                      <div style="width:100px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">הוזן</div>
+                      <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline:1px solid var(--layout-border-color);text-align:center">הכרעה</div>
+                    </div>
+
+                    <sc-for list="{{ g.items }}" as="item" hint-placeholder-count="3">
+                      <div>
+                        <div style="display:flex;align-items:stretch;min-height:36px;border-bottom:1px solid var(--layout-border-color)" style-hover="background:var(--allgrey-background-color)">
+                          <div style="width:6px;flex:none;background:{{ item.groupColor }}"></div>
+
+                          <div style="width:40px;flex:none;display:grid;place-items:center;border-inline-start:1px solid var(--layout-border-color)">
+                            <input type="checkbox" aria-label="בחירת פריט" checked="{{ item.selected }}" onChange="{{ item.onSelect }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
+                          </div>
+
+                          <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-8)">
+                            <a href="MeshekOS%20Review%20Split.dc.html" style="font:var(--font-text2-normal);color:var(--primary-text-color);text-decoration:none" style-hover="color:var(--primary-color);text-decoration:underline">{{ item.title }}</a>
+                            <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-family:ui-monospace,monospace">{{ item.ref }}</span>
+                          </div>
+
+                          <div style="width:130px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
+                            <span style="width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;color:#fff;background:{{ item.byColor }}">{{ item.initials }}</span>
+                            <span style="font:var(--font-text3-normal);color:var(--secondary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ item.by }}</span>
+                          </div>
+
+                          <div style="width:190px;flex:none;background:{{ item.catBg }};color:{{ item.catFg }};display:grid;place-items:center;text-align:center;font:var(--font-text2-normal);padding:var(--space-4)">{{ item.category }}</div>
+
+                          <div style="width:210px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-4);white-space:nowrap;overflow:hidden">
+                            <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ item.fieldLabel }}</span>
+                            <span style="font:var(--font-text2-normal);text-decoration:underline dashed var(--color-wolf_gray);text-underline-offset:3px">{{ item.fieldValue }}</span>
+                          </div>
+
+                          <div dir="ltr" style="width:100px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ item.date }}</div>
+
+                          <div style="width:170px;flex:none;padding:var(--space-4) var(--space-8);border-inline:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
+                            <sc-if value="{{ item.showActions }}" hint-placeholder-val="{{ true }}">
+                              <span style="display:flex;gap:var(--space-4)">
+                                <button type="button" onClick="{{ item.onApprove }}" style="background:transparent;color:var(--positive-color);border:1px solid var(--positive-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--positive-color-selected)">אישור</button>
+                                <button type="button" onClick="{{ item.onReject }}" style="background:transparent;color:var(--negative-color);border:1px solid var(--negative-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--negative-color-selected)">דחייה</button>
+                              </span>
+                            </sc-if>
+                            <sc-if value="{{ item.resolved }}" hint-placeholder-val="{{ false }}">
+                              <span style="font:var(--font-text2-normal);color:{{ item.resolvedColor }}">{{ item.resolvedTitle }}</span>
+                            </sc-if>
+                            <sc-if value="{{ item.readOnly }}" hint-placeholder-val="{{ false }}">
+                              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">לצפייה בלבד</span>
+                            </sc-if>
+                          </div>
+                        </div>
+
+                        <sc-if value="{{ item.resolved }}" hint-placeholder-val="{{ false }}">
+                          <div style="background:var(--allgrey-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-4) var(--space-16) var(--space-4) 46px;font:var(--font-text3-normal);color:var(--secondary-text-color);display:flex;gap:var(--space-8);flex-wrap:wrap">
+                            <span>נימוק שנרשם:</span>
+                            <b style="font-weight:600;color:var(--primary-text-color)">{{ item.resolvedReason }}</b>
+                            <span>· יעל לביא ·</span>
+                            <span dir="ltr" style="unicode-bidi:isolate;font-variant-numeric:tabular-nums">19.08.2026</span>
+                          </div>
+                        </sc-if>
+
+                        <sc-if value="{{ item.panelOpen }}" hint-placeholder-val="{{ false }}">
+                          <div style="background:var(--primary-highlighted-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-12)">
+                            <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                              <span style="font:var(--font-text2-medium)">{{ item.panelTitle }}</span>
+                              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">נימוק הוא שדה חובה בכל הכרעה, גם באישור</span>
+                            </div>
+                            <div style="display:flex;gap:var(--space-12);flex-wrap:wrap;align-items:flex-end">
+                              <div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:280px">
+                                <label for="{{ item.selectId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">נימוק</label>
+                                <select id="{{ item.selectId }}" value="{{ item.reasonValue }}" onChange="{{ item.onReasonChange }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                                  <option value="">— בחרי נימוק —</option>
+                                  <sc-for list="{{ item.reasonOptions }}" as="r" hint-placeholder-count="5">
+                                    <option value="{{ r }}">{{ r }}</option>
+                                  </sc-for>
+                                </select>
+                              </div>
+                              <sc-if value="{{ item.needsNote }}" hint-placeholder-val="{{ false }}">
+                                <div style="display:flex;flex-direction:column;gap:var(--space-4);flex:1;min-width:260px">
+                                  <label for="{{ item.noteId }}" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">פירוט (חובה כשנבחר ״אחר״)</label>
+                                  <input id="{{ item.noteId }}" type="text" value="{{ item.noteValue }}" onChange="{{ item.onNoteChange }}" placeholder="במה מדובר" aria-invalid="{{ item.noteInvalid }}" style="background:var(--secondary-background-color);border:1px solid {{ item.noteBorder }};border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:{{ item.noteBorderHover }}" style-focus="border-color:{{ item.noteBorderFocus }}">
+                                </div>
+                              </sc-if>
+                              <div style="display:flex;gap:var(--space-8);align-items:center">
+                                <button type="button" disabled="{{ item.confirmDisabled }}" onClick="{{ item.onConfirm }}" style="background:{{ item.confirmBg }};color:{{ item.confirmFg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:{{ item.confirmCursor }}">{{ item.confirmLabel }}</button>
+                                <button type="button" onClick="{{ item.onCancel }}" style="background:transparent;color:var(--secondary-text-color);border:0;border-radius:var(--border-radius-small);height:32px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);cursor:pointer" style-hover="color:var(--primary-text-color)">ביטול</button>
+                              </div>
+                            </div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+
+                    <div style="display:flex;align-items:stretch;min-height:36px;border-bottom:1px solid var(--layout-border-color)">
+                      <div style="width:6px;flex:none;background:{{ g.color }}"></div>
+                      <div style="width:40px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center">
+                        <a href="MeshekOS%20Governed%20Form.dc.html" style="background:transparent;color:var(--secondary-text-color);font:var(--font-text2-normal);text-decoration:none;padding:0" style-hover="color:var(--primary-color);text-decoration:none">+ הוספת פריט</a>
+                      </div>
+                      <div style="width:130px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:190px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:210px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:100px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:170px;flex:none;border-inline:1px solid var(--layout-border-color)"></div>
+                    </div>
+
+                    <div style="display:flex;align-items:stretch;min-height:36px">
+                      <div style="width:46px;flex:none"></div>
+                      <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);display:flex;align-items:center;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ g.summaryLabel }}</div>
+                      <div style="width:130px;flex:none"></div>
+                      <div style="width:190px;flex:none;padding:var(--space-8) 0;display:flex;align-items:center">
+                        <span style="display:flex;width:100%;height:20px;border-radius:var(--border-radius-4);overflow:hidden">
+                          <sc-for list="{{ g.battery }}" as="seg" hint-placeholder-count="3">
+                            <span title="{{ seg.label }}" style="width:{{ seg.width }};background:{{ seg.color }}"></span>
+                          </sc-for>
+                        </span>
+                      </div>
+                      <div style="width:210px;flex:none"></div>
+                      <div style="width:100px;flex:none"></div>
+                      <div style="width:170px;flex:none"></div>
+                    </div>
+                  </div>
+                </sc-if>
+              </section>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showRailCounters&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;מסילה&quot;},&quot;showPermissionPanel&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;מסילה&quot;}}">
+const CAT = {
+  "מקור לא מאומת":        {bg:"var(--color-working_orange)", fg:"#323338", tier:"verify"},
+  "נתון חסר":              {bg:"var(--color-stuck-red)",      fg:"#ffffff", tier:"verify"},
+  "סתירה בין מקורות":      {bg:"var(--color-sofia_pink)",     fg:"#ffffff", tier:"verify"},
+  "הוזן ידנית ללא אסמכתא": {bg:"var(--color-egg_yolk)",       fg:"#323338", tier:"verify"},
+  "פג תוקף / לא עדכני":    {bg:"var(--color-american_gray)",  fg:"#ffffff", tier:"pending"},
+  "בהמתנה לאישור גוף":     {bg:"var(--color-navy)",           fg:"#ffffff", tier:"pending"},
+  "תלוי בהחלטה פתוחה":     {bg:"var(--color-dark_purple)",    fg:"#ffffff", tier:"pending"}
+};
+
+const PEOPLE = {
+  "איתי ברק":      {initials:"אב", color:"var(--color-navy)"},
+  "מיכל רז":       {initials:"מר", color:"var(--color-dark_purple)"},
+  "נועה שחר":      {initials:"נש", color:"var(--color-grass_green)"},
+  "יעל לביא":      {initials:"יל", color:"var(--color-dark-red)"},
+  "רישום אוטומטי": {initials:"מע", color:"var(--color-american_gray)"}
+};
+
+const REJECT_REASONS = ["חריגה מסמכות הגוף","פגם בהליך","חסר מסמך מקור","סתירה להחלטה קודמת","שיקול תקציבי","אחר"];
+const APPROVE_REASONS = ["אומת מול מסמך מקור","אושר בישיבת הגוף","הוצגה אסמכתא משלימה","מצב מוצהר ומתועד","אחר"];
+const TOOLBAR = ["חיפוש","אחראי","סינון","מיון","הסתרת עמודות","קיבוץ"];
+
+const MEET = "MeshekOS%20Meetings.dc.html";
+const NAV = [
+  {id:"dash", label:"לוח בקרה"},
+  {id:"meetings", label:"ישיבות", href:MEET},
+  {id:"minutes", label:"פרוטוקולים", href:MEET},
+  {id:"decisions", label:"החלטות", href:MEET},
+  {id:"review", label:"תור סקירה"},
+  {id:"tasks", label:"משימות"},
+  {id:"docs", label:"מסמכים וידע"}
+];
+
+const BODIES = [
+  {
+    id:"mgmt", name:"הנהלת הקהילה", role:"מנהלת הקהילה", readOnly:false,
+    hint:"פעולה מהותית תבקש גוף מזוהה.",
+    meta:"ישיבה הבאה 26.08.2026 · מניין 7 מתוך 9",
+    counts:{meetings:2, minutes:1, decisions:4, review:5, tasks:6},
+    items:[
+      {ref:"DEC-2026-0114", cat:"סתירה בין מקורות", title:"הרחבת שעות פעילות מרכז הצעירים",
+       fieldLabel:"תקציב מוצהר", fieldValue:"₪184,000", date:"14.08.2026", by:"איתי ברק"},
+      {ref:"DEC-2026-0117", cat:"מקור לא מאומת", title:"אימוץ נוהל רכש מעודכן",
+       fieldLabel:"אסמכתא", fieldValue:"טיוטה ללא חתימה", date:"16.08.2026", by:"מיכל רז"},
+      {ref:"TSK-2026-0509", cat:"נתון חסר", title:"הקצאת אחראי לתחזוקת מקלטים",
+       fieldLabel:"אחראי", fieldValue:"לא הוזן", date:"17.08.2026", by:"רישום אוטומטי"},
+      {ref:"DEC-2025-0402", cat:"פג תוקף / לא עדכני", title:"תעריפי שימוש באולם הרב־תכליתי",
+       fieldLabel:"תוקף עד", fieldValue:"31.12.2025", date:"03.11.2025", by:"יעל לביא"},
+      {ref:"DEC-2026-0121", cat:"תלוי בהחלטה פתוחה", title:"מיקום עמדות טעינה חשמליות",
+       fieldLabel:"תלוי בהחלטה", fieldValue:"DEC-2026-0098", date:"18.08.2026", by:"איתי ברק"}
+    ],
+    caps:[
+      {mark:"✓", label:"עיון ברשומות", state:"מלא", ok:true},
+      {mark:"✓", label:"הכרעה בסקירה", state:"מלא", ok:true},
+      {mark:"✓", label:"פרסום פרוטוקול", state:"מלא", ok:true}
+    ]
+  },
+  {
+    id:"edu", name:"ועדת חינוך", role:"צופה", readOnly:true,
+    hint:"בגוף זה אין לך הרשאת הכרעה.",
+    meta:"ישיבה הבאה 02.09.2026 · מניין 4 מתוך 5",
+    counts:{meetings:1, minutes:2, decisions:2, review:2, tasks:3},
+    items:[
+      {ref:"DEC-2026-0088", cat:"הוזן ידנית ללא אסמכתא", title:"תוספת סייעת לגן הרימון",
+       fieldLabel:"עלות חודשית", fieldValue:"₪6,200", date:"11.08.2026", by:"נועה שחר"},
+      {ref:"DEC-2026-0091", cat:"בהמתנה לאישור גוף", title:"תוכנית חוגי הקיץ",
+       fieldLabel:"מצב המסמך", fieldValue:"טיוטה", date:"15.08.2026", by:"נועה שחר"}
+    ],
+    caps:[
+      {mark:"✓", label:"עיון ברשומות", state:"מלא", ok:true},
+      {mark:"✕", label:"הכרעה בסקירה", state:"חסום", ok:false},
+      {mark:"✕", label:"פרסום פרוטוקול", state:"חסום", ok:false}
+    ]
+  },
+  {
+    id:"infra", name:"ועדת תשתיות", role:"חברת ועדה", readOnly:false,
+    hint:"הכרעה מותרת עד ₪50,000.",
+    meta:"ישיבה הבאה 24.08.2026 · מניין 5 מתוך 7",
+    counts:{meetings:1, minutes:1, decisions:3, review:3, tasks:4},
+    items:[
+      {ref:"DEC-2026-0098", cat:"נתון חסר", title:"החלפת קו ביוב ברחוב האלון",
+       fieldLabel:"אומדן מהנדס", fieldValue:"לא הוזן", date:"12.08.2026", by:"איתי ברק"},
+      {ref:"DEC-2026-0103", cat:"סתירה בין מקורות", title:"הסכם תחזוקת הבריכה",
+       fieldLabel:"תקופת התקשרות", fieldValue:"24 חודשים", date:"13.08.2026", by:"מיכל רז"},
+      {ref:"TSK-2026-0512", cat:"פג תוקף / לא עדכני", title:"בדיקת מערכת כיבוי אש",
+       fieldLabel:"בדיקה אחרונה", fieldValue:"07.2025", date:"01.08.2026", by:"רישום אוטומטי"}
+    ],
+    caps:[
+      {mark:"✓", label:"עיון ברשומות", state:"מלא", ok:true},
+      {mark:"✓", label:"הכרעה בסקירה", state:"עד ₪50,000", ok:true},
+      {mark:"✕", label:"פרסום פרוטוקול", state:"חסום", ok:false}
+    ]
+  },
+  {
+    id:"audit", name:"ועדת ביקורת", role:"גישה בוטלה", revoked:true,
+    hint:"הגישה לגוף זה הוסרה.", meta:"", counts:{}, items:[], caps:[]
+  }
+];
+
+class Component extends DCLogic {
+  state = {bodyId:"mgmt", nav:"review", openRef:null, mode:null, reason:"", note:"", resolved:{}, selected:{}, collapsed:{},
+           q:"", owner:"", cat:"", loading:false};
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  loadBody(id) {
+    clearTimeout(this._t);
+    this.setState({bodyId:id, loading:true, openRef:null, mode:null, reason:"", note:"", selected:{}});
+    this._t = setTimeout(() => this.setState({loading:false}), 550);
+  }
+
+  matches(r) {
+    const {q, owner, cat} = this.state;
+    if (owner && r.by !== owner) return false;
+    if (cat && r.cat !== cat) return false;
+    if (q.trim()) {
+      const hay = (r.title + " " + r.ref + " " + r.fieldLabel + " " + r.fieldValue).toLowerCase();
+      if (hay.indexOf(q.trim().toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+
+  body() { return BODIES.find(b => b.id === this.state.bodyId) || BODIES[0]; }
+
+  buildItem(raw, body, groupColor) {
+    const s = this.state;
+    const res = s.resolved[raw.ref];
+    const open = s.openRef === raw.ref && !res;
+    const isReject = s.mode === "reject";
+    const needsNote = s.reason === "אחר";
+    const meta = CAT[raw.cat];
+    const who = PEOPLE[raw.by] || {initials:"—", color:"var(--color-american_gray)"};
+    const disabled = !s.reason || (needsNote && !s.note.trim());
+    return {
+      ...raw,
+      groupColor,
+      category: raw.cat,
+      catBg: meta.bg,
+      catFg: meta.fg,
+      initials: who.initials,
+      byColor: who.color,
+      selected: !!s.selected[raw.ref],
+      onSelect: () => this.setState(st => {
+        const next = {...st.selected};
+        if (next[raw.ref]) delete next[raw.ref]; else next[raw.ref] = true;
+        return {selected: next};
+      }),
+      resolved: !!res,
+      resolvedTitle: res ? res.title : "",
+      resolvedReason: res ? res.reason : "",
+      resolvedColor: res && res.rejected ? "var(--negative-color)" : "var(--positive-color)",
+      readOnly: !!body.readOnly && !res,
+      showActions: !res && !open && !body.readOnly,
+      panelOpen: open,
+      panelTitle: isReject ? "דחיית הפריט" : "אישור הפריט",
+      selectId: "reason-" + raw.ref,
+      noteId: "note-" + raw.ref,
+      reasonOptions: isReject ? REJECT_REASONS : APPROVE_REASONS,
+      reasonValue: s.reason,
+      noteValue: s.note,
+      needsNote,
+      noteInvalid: needsNote && !s.note.trim() ? "true" : "false",
+      noteBorder: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--ui-border-color)",
+      noteBorderHover: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--primary-text-color)",
+      noteBorderFocus: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--primary-color)",
+      confirmDisabled: disabled,
+      confirmBg: disabled ? "var(--disabled-background-color)" : (isReject ? "var(--negative-color)" : "var(--positive-color)"),
+      confirmFg: disabled ? "var(--disabled-text-color)" : "var(--text-color-on-primary)",
+      confirmCursor: disabled ? "not-allowed" : "pointer",
+      confirmLabel: isReject ? "רשמי דחייה" : "רשמי אישור",
+      onApprove: () => this.setState({openRef: raw.ref, mode:"approve", reason:"", note:""}),
+      onReject: () => this.setState({openRef: raw.ref, mode:"reject", reason:"", note:""}),
+      onReasonChange: e => this.setState({reason: e.target.value}),
+      onNoteChange: e => this.setState({note: e.target.value}),
+      onCancel: () => this.setState({openRef:null, mode:null, reason:"", note:""}),
+      onConfirm: () => {
+        const reason = s.reason === "אחר" ? "אחר — " + s.note.trim() : s.reason;
+        this.setState(st => ({
+          resolved: {...st.resolved, [raw.ref]: {title: isReject ? "נדחה" : "אושר", reason, rejected: isReject}},
+          openRef:null, mode:null, reason:"", note:""
+        }));
+      }
+    };
+  }
+
+  buildGroup(id, title, color, raws, body) {
+    const items = raws.map(r => this.buildItem(r, body, color));
+    const tally = {};
+    items.forEach(i => { tally[i.cat] = (tally[i.cat] || 0) + 1; });
+    const total = items.length || 1;
+    const expanded = !this.state.collapsed[id];
+    return {
+      id, title, color,
+      count: String(items.length),
+      items,
+      expanded,
+      caretRotate: expanded ? "0deg" : "-90deg",
+      summaryLabel: items.length + " פריטים בקבוצה",
+      battery: Object.keys(tally).map(k => ({
+        label: k + " — " + tally[k],
+        color: CAT[k].bg,
+        width: Math.round((tally[k] / total) * 100) + "%"
+      })),
+      onToggle: () => this.setState(st => ({collapsed: {...st.collapsed, [id]: !st.collapsed[id]}}))
+    };
+  }
+
+  renderVals() {
+    const b = this.body();
+    const all = b.items || [];
+    const raws = all.filter(r => this.matches(r));
+    const selectedCount = Object.keys(this.state.selected).length;
+    const {q, owner, cat, loading} = this.state;
+    const hasFilters = !!(q.trim() || owner || cat);
+    const isEmpty = !loading && raws.length === 0;
+
+    const activeFilters = [];
+    if (q.trim()) activeFilters.push({label: "חיפוש: " + q.trim()});
+    if (owner) activeFilters.push({label: "נרשם בידי: " + owner});
+    if (cat) activeFilters.push({label: cat});
+
+    return {
+      q, owner, cat, loading, hasFilters, isEmpty, activeFilters,
+      owners: Array.from(new Set(all.map(r => r.by))),
+      cats: Object.keys(CAT),
+      resultLabel: loading ? "" : raws.length + " מתוך " + all.length + " פריטים",
+      emptyTitle: hasFilters ? "אין פריטים שעונים על הסינון" : "אין פריטים בתור הסקירה",
+      emptyBody: hasFilters
+        ? "הסינון הנוכחי מסתיר את כל " + all.length + " הפריטים בגוף זה. אפשר לנקות אותו ולחזור לרשומה המלאה."
+        : "כל הפריטים בגוף זה הוכרעו. פריט חדש ייכנס לכאן ברגע שיירשם.",
+      skeletonRows: [{w1:"240px",w2:"120px"},{w1:"180px",w2:"160px"},{w1:"280px",w2:"90px"},{w1:"200px",w2:"140px"},{w1:"160px",w2:"110px"}],
+      onQ: e => this.setState({q: e.target.value}),
+      onOwner: e => this.setState({owner: e.target.value}),
+      onCat: e => this.setState({cat: e.target.value}),
+      onClearFilters: () => this.setState({q:"", owner:"", cat:""}),
+      showPermissionPanel: this.props.showPermissionPanel ?? true,
+      bodies: BODIES.map(x => ({id:x.id, name:x.name})),
+      bodyId: b.id,
+      bodyName: b.name,
+      bodyHint: b.hint,
+      bodyMeta: b.meta,
+      roleLabel: b.role,
+      capabilities: (b.caps || []).map(c => ({...c, markBg: c.ok ? "var(--positive-color)" : "var(--color-american_gray)"})),
+      revoked: !!b.revoked,
+      granted: !b.revoked,
+      hasSelection: selectedCount > 0,
+      selectedCount: String(selectedCount),
+      onClearSelection: () => this.setState({selected:{}}),
+      onBodyChange: e => this.loadBody(e.target.value),
+      onBackToDefault: () => this.loadBody("mgmt"),
+      navItems: NAV.map(n => {
+        const count = (b.counts || {})[n.id];
+        const current = this.state.nav === n.id;
+        return {
+          ...n,
+          current: current ? "page" : null,
+          bg: current ? "var(--primary-selected-color)" : "transparent",
+          weight: current ? "600" : "400",
+          countBg: current ? "var(--primary-color)" : "var(--ui-background-color)",
+          countColor: current ? "#ffffff" : "var(--secondary-text-color)",
+          href: n.href || "#main",
+          onSelect: e => { if (!n.href) { e.preventDefault(); this.setState({nav: n.id}); } },
+          showCount: (this.props.showRailCounters ?? true) && !!count,
+          count: count ? String(count) : ""
+        };
+      }),
+      groups: (loading || isEmpty) ? [] : [
+        this.buildGroup("verify", "דורש אימות", "var(--color-stuck-red)", raws.filter(r => CAT[r.cat].tier === "verify"), b),
+        this.buildGroup("pending", "בהמתנה", "var(--color-navy)", raws.filter(r => CAT[r.cat].tier === "pending"), b)
+      ].filter(g => g.items.length > 0)
+    };
+  }
+}
+</script>
+</body>
+</html>

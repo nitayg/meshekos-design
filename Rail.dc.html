@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+</helmet>
+
+<nav dir="rtl" aria-label="ניווט ראשי" style="background:var(--primary-background-color);border-inline-start:1px solid var(--layout-border-color);padding:var(--space-16) var(--space-12);display:flex;flex-direction:column;gap:var(--space-20);position:sticky;top:0;height:100vh;box-sizing:border-box;overflow-y:auto;font:var(--font-text2-normal);color:var(--primary-text-color)">
+
+  <div style="padding-inline:var(--space-4)">
+    <a href="MeshekOS%20Board%20v3.dc.html" style="display:block">
+      <img src="assets/meshekos-logo.png" alt="MeshekOS" style="display:block;width:100%;max-width:198px;height:auto;border-radius:var(--border-radius-4)">
+    </a>
+  </div>
+
+  <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-2)">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+      <li>
+        <a href="{{ n.href }}" aria-current="{{ n.current }}" style="display:flex;align-items:center;gap:var(--space-8);padding:var(--space-8) var(--space-12);border-radius:var(--border-radius-4);font:var(--font-text2-normal);font-weight:{{ n.weight }};color:{{ n.color }};text-decoration:none;background:{{ n.bg }};cursor:{{ n.cursor }}" style-hover="background:var(--primary-background-hover-color);text-decoration:none">
+          <span>{{ n.label }}</span>
+          <sc-if value="{{ n.soon }}" hint-placeholder-val="{{ false }}">
+            <span style="margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--space-4);border-radius:var(--border-radius-4);background:var(--ui-background-color);color:var(--secondary-text-color);font:var(--font-text3-normal)">בקרוב</span>
+          </sc-if>
+        </a>
+      </li>
+    </sc-for>
+  </ul>
+
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:var(--space-8);font:var(--font-text3-normal);padding-inline:var(--space-4)">
+    <a href="#" style="color:var(--link-color);text-decoration:none">התראות (4)</a>
+    <div style="display:flex;align-items:center;gap:var(--space-8)">
+      <span style="width:24px;height:24px;border-radius:50%;background:var(--color-dark_purple);color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">יל</span>
+      <span>יעל לביא</span>
+    </div>
+    <a href="MeshekOS%20Auth.dc.html" style="color:var(--secondary-text-color);text-decoration:none">יציאה</a>
+  </div>
+</nav>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:250,&quot;height&quot;:700},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;board&quot;,&quot;meetings&quot;,&quot;review&quot;,&quot;form&quot;],&quot;default&quot;:&quot;board&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const NAV = [
+  {id:"board",    label:"לוח סקירה",           href:"MeshekOS%20Board%20v3.dc.html"},
+  {id:"meetings", label:"ישיבות ופרוטוקולים",  href:"MeshekOS%20Meetings.dc.html"},
+  {id:"review",   label:"סקירה מפוצלת",        href:"MeshekOS%20Review%20Split.dc.html"},
+  {id:"form",     label:"פריט חדש",            href:"MeshekOS%20Governed%20Form.dc.html"},
+  {id:"tasks",    label:"משימות",              href:null},
+  {id:"docs",     label:"מסמכים וידע",         href:null}
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const cur = this.props.current || "board";
+    return {
+      navItems: NAV.map(n => {
+        const isCur = n.id === cur;
+        return {
+          label: n.label,
+          href: n.href || "#",
+          current: isCur ? "page" : null,
+          weight: isCur ? "600" : "400",
+          color: n.href ? "var(--primary-text-color)" : "var(--secondary-text-color)",
+          bg: isCur ? "var(--primary-selected-color)" : "transparent",
+          cursor: n.href ? "pointer" : "default",
+          soon: !n.href
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

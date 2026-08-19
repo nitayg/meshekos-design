@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--allgrey-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--allgrey-background-color);display:grid;grid-template-columns:250px minmax(0,1fr);align-items:start">
+  <dc-import name="Rail" current="meetings" hint-size="250px,100vh"></dc-import>
+  <div style="min-width:0">
+
+  <header style="background:var(--primary-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-12) var(--space-24);display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+    <img src="assets/meshekos-logo.png" alt="MeshekOS" style="display:block;height:34px;width:auto;border-radius:var(--border-radius-4)">
+    <div>
+      <h1 style="font:var(--font-h3-bold)">ישיבות ופרוטוקולים</h1>
+      <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ bodyLine }}</div>
+    </div>
+        <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-8)">
+      <label for="body-switch" style="font:var(--font-text2-normal);color:var(--secondary-text-color)">גוף פעיל</label>
+      <select id="body-switch" value="{{ bodyId }}" onChange="{{ onBodyChange }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+        <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="3">
+          <option value="{{ b.id }}">{{ b.name }}</option>
+        </sc-for>
+      </select>
+      <button type="button" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">ישיבה חדשה</button>
+    </div>
+  </header>
+
+  <div style="display:grid;grid-template-columns:320px minmax(0,1fr);align-items:start">
+
+    <aside aria-label="רשימת ישיבות" style="background:var(--primary-background-color);border-inline-start:1px solid var(--layout-border-color);min-height:calc(100vh - 59px);box-sizing:border-box;padding:var(--space-16) var(--space-12);display:flex;flex-direction:column;gap:var(--space-12)">
+      <div role="group" aria-label="סינון ישיבות" style="display:flex;border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);overflow:hidden">
+        <sc-for list="{{ scopes }}" as="s" hint-placeholder-count="2">
+          <button type="button" onClick="{{ s.onPick }}" aria-pressed="{{ s.pressed }}" style="flex:1;background:{{ s.bg }};color:{{ s.fg }};border:0;height:32px;font:var(--font-text2-normal);cursor:pointer">{{ s.label }}</button>
+        </sc-for>
+      </div>
+
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-8)">
+        <sc-for list="{{ meetingList }}" as="m" hint-placeholder-count="4">
+          <li>
+            <button type="button" onClick="{{ m.onPick }}" aria-current="{{ m.current }}" style="width:100%;text-align:start;background:{{ m.bg }};border:1px solid {{ m.border }};border-radius:var(--border-radius-8);padding:var(--space-12);cursor:pointer;display:flex;flex-direction:column;gap:var(--space-4)" style-hover="border-color:var(--primary-text-color)">
+              <span style="display:flex;align-items:center;gap:var(--space-8);width:100%">
+                <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ m.date }}</span>
+                <span style="margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ m.statusBg }};color:{{ m.statusFg }};font:var(--font-text3-normal)">{{ m.status }}</span>
+              </span>
+              <span style="font:var(--font-text2-medium)">{{ m.title }}</span>
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ m.sub }}</span>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+    </aside>
+
+    <main style="padding:var(--space-20) var(--space-24) var(--space-64);min-width:0">
+
+      <div style="display:flex;align-items:flex-start;gap:var(--space-16);flex-wrap:wrap;margin-bottom:var(--space-16)">
+        <div>
+          <h2 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold)">{{ meeting.title }}</h2>
+          <div style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin-top:var(--space-4)">{{ meeting.meta }}</div>
+        </div>
+        <div style="margin-inline-start:auto;min-width:230px">
+          <div style="display:flex;align-items:baseline;gap:var(--space-8);margin-bottom:var(--space-4)">
+            <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">מניין</span>
+            <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-medium);font-variant-numeric:tabular-nums">{{ meeting.quorumLabel }}</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ meeting.quorumBg }};color:{{ meeting.quorumFg }};font:var(--font-text2-normal)">{{ meeting.quorumState }}</span>
+          </div>
+          <div style="display:flex;gap:2px;height:8px;border-radius:var(--border-radius-4);overflow:hidden">
+            <sc-for list="{{ meeting.quorumCells }}" as="c" hint-placeholder-count="9">
+              <span title="{{ c.title }}" style="flex:1;background:{{ c.color }}"></span>
+            </sc-for>
+          </div>
+          <div style="margin-top:var(--space-8);display:flex;gap:var(--space-4);flex-wrap:wrap">
+            <sc-for list="{{ meeting.attendees }}" as="a" hint-placeholder-count="6">
+              <span title="{{ a.title }}" style="width:26px;height:26px;border-radius:50%;background:{{ a.bg }};color:{{ a.fg }};display:grid;place-items:center;font:var(--font-text3-normal);border:1px solid var(--layout-border-color)">{{ a.initials }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:var(--space-16);border-bottom:1px solid var(--layout-border-color);margin-bottom:var(--space-20)">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{ t.onPick }}" aria-current="{{ t.current }}" style="background:transparent;border:0;border-bottom:2px solid {{ t.underline }};margin-bottom:-1px;padding:var(--space-8) var(--space-4);font:{{ t.font }};color:{{ t.color }};cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-4)">
+            <span>{{ t.label }}</span>
+            <sc-if value="{{ t.showCount }}" hint-placeholder-val="{{ false }}">
+              <span dir="ltr" style="unicode-bidi:isolate;display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 var(--space-4);border-radius:var(--border-radius-4);background:var(--ui-background-color);color:var(--secondary-text-color);font:var(--font-text3-normal);font-variant-numeric:tabular-nums">{{ t.count }}</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+          <sc-for list="{{ agenda }}" as="a" hint-placeholder-count="5">
+            <article style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16);display:flex;gap:var(--space-16)">
+              <div dir="ltr" style="unicode-bidi:isolate;width:32px;flex:none;font:var(--font-h3-bold);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ a.num }}</div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-8)">
+                <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                  <h3 style="font:var(--font-text1-medium)">{{ a.title }}</h3>
+                  <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ a.stateBg }};color:{{ a.stateFg }};font:var(--font-text3-normal)">{{ a.state }}</span>
+                </div>
+                <div style="font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ a.presenter }} · {{ a.minutes }}</div>
+                <p style="margin:0;font:var(--font-text2-normal);max-width:76ch">{{ a.summary }}</p>
+                <sc-if value="{{ a.hasDecision }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;border-top:1px solid var(--layout-border-color);padding-top:var(--space-8)">
+                    <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">נוצרה החלטה</span>
+                    <a href="MeshekOS%20Review%20Split.dc.html" dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-normal);font-family:ui-monospace,monospace">{{ a.decisionRef }}</a>
+                    <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">· מקורה בסעיף {{ a.clause }} בפרוטוקול</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ a.deferred }}" hint-placeholder-val="{{ false }}">
+                  <div style="border-top:1px solid var(--layout-border-color);padding-top:var(--space-8);font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ a.deferReason }}</div>
+                </sc-if>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProtocol }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:var(--space-20);align-items:flex-start;flex-wrap:wrap">
+
+          <article style="flex:1;min-width:min(100%,520px);background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-24) var(--space-32)">
+            <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-16)">
+              <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ protocol.stateBg }};color:{{ protocol.stateFg }};font:var(--font-text2-normal)">{{ protocol.state }}</span>
+              <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ protocol.ref }}</span>
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">גרסה {{ protocol.version }}</span>
+            </div>
+
+            <h3 style="font:var(--font-h3-bold);margin-bottom:var(--space-4)">{{ protocol.title }}</h3>
+            <div style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin-bottom:var(--space-20)">{{ protocol.subtitle }}</div>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-16)">
+              <sc-for list="{{ protocol.clauses }}" as="c" hint-placeholder-count="5">
+                <section style="display:flex;gap:var(--space-12)">
+                  <div dir="ltr" style="unicode-bidi:isolate;width:34px;flex:none;font:var(--font-text2-medium);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ c.num }}</div>
+                  <div style="flex:1;min-width:0">
+                    <p style="margin:0;font:var(--font-text1-normal);line-height:26px;max-width:70ch;text-wrap:pretty">{{ c.text }}</p>
+                    <sc-if value="{{ c.hasNote }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:var(--space-8);display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ c.noteBg }};color:{{ c.noteFg }};font:var(--font-text3-normal)">{{ c.noteLabel }}</span>
+                        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ c.note }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                </section>
+              </sc-for>
+            </div>
+          </article>
+
+          <aside style="width:300px;flex:none;display:flex;flex-direction:column;gap:var(--space-12)">
+            <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16)">
+              <h4 style="font:var(--font-text1-medium);margin-bottom:var(--space-8)">אישור הפרוטוקול</h4>
+              <p style="margin:0 0 var(--space-12);font:var(--font-text2-normal);color:var(--secondary-text-color)">{{ approval.hint }}</p>
+
+              <sc-if value="{{ approval.open }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+                  <label for="proto-reason" style="display:flex;align-items:center;font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">נימוק</label>
+                  <select id="proto-reason" value="{{ approval.reason }}" onChange="{{ approval.onReason }}" style="width:100%;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                    <option value="">— בחרי נימוק —</option>
+                    <sc-for list="{{ approval.reasons }}" as="r" hint-placeholder-count="4">
+                      <option value="{{ r }}">{{ r }}</option>
+                    </sc-for>
+                  </select>
+                  <button type="button" disabled="{{ approval.disabled }}" onClick="{{ approval.onApprove }}" style="background:{{ approval.bg }};color:{{ approval.fg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:{{ approval.cursor }}">אישור ופרסום</button>
+                  <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ approval.gate }}</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ approval.done }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--positive-color);color:var(--fixed-light-color);font:var(--font-text2-normal);align-self:flex-start">אושר ופורסם</span>
+                  <span style="font:var(--font-text2-normal)">{{ approval.doneReason }}</span>
+                  <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">יעל לביא · 19.08.2026</span>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-16)">
+              <h4 style="font:var(--font-text1-medium);margin-bottom:var(--space-8)">היסטוריית גרסאות</h4>
+              <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-8)">
+                <sc-for list="{{ protocol.history }}" as="h" hint-placeholder-count="3">
+                  <li style="display:flex;flex-direction:column;gap:2px;border-inline-start:2px solid var(--layout-border-color);padding-inline-start:var(--space-8)">
+                    <span style="font:var(--font-text2-normal)">{{ h.label }}</span>
+                    <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ h.who }} · <span dir="ltr" style="unicode-bidi:isolate;font-variant-numeric:tabular-nums">{{ h.date }}</span></span>
+                  </li>
+                </sc-for>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDecisions }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);overflow-x:auto">
+          <div style="display:flex;min-width:860px;border-bottom:1px solid var(--layout-border-color);font:var(--font-text2-normal);color:var(--secondary-text-color)">
+            <div style="flex:1;min-width:240px;padding:var(--space-8) var(--space-16)">החלטה</div>
+            <div style="width:150px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">סעיף מקור</div>
+            <div style="width:190px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב אי-ודאות</div>
+            <div style="width:130px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">תוצאת הצבעה</div>
+            <div style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב</div>
+          </div>
+          <sc-for list="{{ decisions }}" as="d" hint-placeholder-count="3">
+            <div style="display:flex;min-width:860px;align-items:stretch;min-height:44px;border-bottom:1px solid var(--layout-border-color)" style-hover="background:var(--allgrey-background-color)">
+              <div style="flex:1;min-width:240px;padding:var(--space-8) var(--space-16);display:flex;flex-direction:column;justify-content:center;gap:2px">
+                <span style="font:var(--font-text2-normal)">{{ d.title }}</span>
+                <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ d.ref }}</span>
+              </div>
+              <div style="width:150px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center">
+                <a href="MeshekOS%20Review%20Split.dc.html" dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-normal);font-family:ui-monospace,monospace">{{ d.clause }}</a>
+              </div>
+              <div style="width:190px;flex:none;background:{{ d.catBg }};color:{{ d.catFg }};display:grid;place-items:center;text-align:center;font:var(--font-text2-normal);padding:var(--space-4)">{{ d.cat }}</div>
+              <div dir="ltr" style="width:130px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text2-normal);font-variant-numeric:tabular-nums">{{ d.vote }}</div>
+              <div style="width:120px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;font:var(--font-text2-normal);color:{{ d.stateColor }}">{{ d.state }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940}}">
+const PEOPLE = {
+  "יעל לביא":  {initials:"יל", bg:"var(--color-dark-red)"},
+  "איתי ברק":  {initials:"אב", bg:"var(--color-navy)"},
+  "מיכל רז":   {initials:"מר", bg:"var(--color-dark_purple)"},
+  "נועה שחר":  {initials:"נש", bg:"var(--color-grass_green)"},
+  "דוד אלון":  {initials:"דא", bg:"var(--color-dark-blue)"},
+  "רותי כספי": {initials:"רכ", bg:"var(--color-berry)"},
+  "עמית שדה":  {initials:"עש", bg:"var(--color-teal)"}
+};
+
+const CAT = {
+  "סתירה בין מקורות": {bg:"var(--color-sofia_pink)",    fg:"#ffffff"},
+  "מקור לא מאומת":    {bg:"var(--color-working_orange)", fg:"#323338"},
+  "נתון חסר":          {bg:"var(--color-stuck-red)",      fg:"#ffffff"},
+  "בהמתנה לאישור גוף": {bg:"var(--color-navy)",           fg:"#ffffff"},
+  "ללא סימון":         {bg:"var(--positive-color-selected)", fg:"#0b3d24"}
+};
+
+const PROTO_REASONS = ["הפרוטוקול תואם את מהלך הישיבה","תוקן לפי הערות החברים","אושר בישיבה שלאחריה","אחר"];
+
+const BODIES = [
+  {id:"mgmt", name:"הנהלת הקהילה", seats:9},
+  {id:"infra", name:"ועדת תשתיות", seats:7},
+  {id:"edu", name:"ועדת חינוך", seats:5}
+];
+
+const MEETINGS = [
+  {
+    id:"m1", bodyId:"mgmt", date:"12.08.2026", title:"ישיבת הנהלה 12/2026", scope:"past",
+    status:"פרוטוקול טיוטה", statusKind:"draft",
+    meta:"12.08.2026, 20:00 · חדר הישיבות · יושבת ראש: יעל לביא",
+    present:["יעל לביא","איתי ברק","מיכל רז","נועה שחר","דוד אלון","רותי כספי","עמית שדה"],
+    absent:2,
+    agenda:[
+      {title:"אישור פרוטוקול הישיבה הקודמת", presenter:"יעל לביא", minutes:"5 דקות", state:"נדון",
+       summary:"הפרוטוקול אושר ללא תיקונים.", decisionRef:null},
+      {title:"הרחבת שעות פעילות מרכז הצעירים", presenter:"נועה שחר", minutes:"25 דקות", state:"הוכרע",
+       summary:"הוצגה פנייה של ועד ההורים ואומדן עלות. הגזברות ציינה שהאומדן אינו כולל תחזוקת מיזוג.",
+       decisionRef:"DEC-2026-0114", clause:"4"},
+      {title:"נוהל רכש מעודכן", presenter:"מיכל רז", minutes:"20 דקות", state:"הוכרע",
+       summary:"הנוהל אומץ בכפוף לצירוף הגרסה החתומה.", decisionRef:"DEC-2026-0117", clause:"5"},
+      {title:"תחזוקת מקלטים", presenter:"איתי ברק", minutes:"15 דקות", state:"נדחה",
+       summary:"הדיון נדחה לישיבה הבאה.", decisionRef:null,
+       deferReason:"נדחה בהסכמה — חסר אומדן מהנדס. נפתחה משימה TSK-2026-0509."},
+      {title:"עמדות טעינה חשמליות", presenter:"דוד אלון", minutes:"10 דקות", state:"נדון",
+       summary:"הוחלט להמתין להכרעת ועדת תשתיות בעניין תוואי החשמל.", decisionRef:"DEC-2026-0121", clause:"7"}
+    ],
+    protocol:{
+      ref:"PRT-2026-0433", version:"2", state:"טיוטה", stateKind:"draft",
+      title:"פרוטוקול ישיבת הנהלת הקהילה 12/2026",
+      subtitle:"12.08.2026, 20:00–21:40 · נכחו שבעה מתוך תשעה · נרשם בידי איתי ברק",
+      clauses:[
+        {num:"1", text:"היושבת ראש פתחה את הישיבה ואישרה את המניין: נכחו שבעה חברים מתוך תשעה."},
+        {num:"2", text:"פרוטוקול הישיבה הקודמת אושר ללא תיקונים."},
+        {num:"3", text:"הוצגה פניית ועד ההורים בעניין שעות הפעילות של מרכז הצעירים."},
+        {num:"4", text:"הוחלט לאשר את הרחבת שעות הפעילות בימים א׳–ה׳ עד 22:00, החל מ־01.10.2026, בכפוף להשלמת אומדן תחזוקת המיזוג. אומדן העלות השנתי שהוצג הוא ₪172,000.",
+         noteLabel:"סתירה בין מקורות", note:"בטיוטת ההחלטה נרשם ₪184,000 — הפער טרם הוכרע.", noteKind:"conflict"},
+        {num:"5", text:"נוהל הרכש המעודכן אומץ. תוקפו מרגע פרסום הגרסה החתומה.",
+         noteLabel:"מקור לא מאומת", note:"הגרסה החתומה טרם צורפה לרשומה.", noteKind:"unverified"},
+        {num:"6", text:"הדיון בתחזוקת המקלטים נדחה לישיבה הבאה בהסכמת החברים."},
+        {num:"7", text:"בעניין עמדות הטעינה הוחלט להמתין להכרעת ועדת תשתיות בתוואי החשמל."}
+      ],
+      history:[
+        {label:"גרסה 2 — תיקון סעיף 4", who:"איתי ברק", date:"14.08.2026"},
+        {label:"גרסה 1 — טיוטה ראשונה", who:"איתי ברק", date:"12.08.2026"},
+        {label:"נפתח מסדר היום", who:"רישום אוטומטי", date:"12.08.2026"}
+      ]
+    },
+    decisions:[
+      {ref:"DEC-2026-0114", title:"הרחבת שעות פעילות מרכז הצעירים", clause:"PRT-2026-0433 §4", cat:"סתירה בין מקורות", vote:"6–1", state:"בסקירה"},
+      {ref:"DEC-2026-0117", title:"אימוץ נוהל רכש מעודכן", clause:"PRT-2026-0433 §5", cat:"מקור לא מאומת", vote:"7–0", state:"בסקירה"},
+      {ref:"DEC-2026-0121", title:"מיקום עמדות טעינה חשמליות", clause:"PRT-2026-0433 §7", cat:"בהמתנה לאישור גוף", vote:"—", state:"מושהה"}
+    ]
+  },
+  {
+    id:"m2", bodyId:"mgmt", date:"26.08.2026", title:"ישיבת הנהלה 13/2026", scope:"upcoming",
+    status:"סדר יום פתוח", statusKind:"open",
+    meta:"26.08.2026, 20:00 · חדר הישיבות · טרם התכנסה",
+    present:["יעל לביא","איתי ברק","מיכל רז","נועה שחר"], absent:5,
+    agenda:[
+      {title:"תחזוקת מקלטים — המשך דיון", presenter:"איתי ברק", minutes:"20 דקות", state:"טרם נדון",
+       summary:"נדרש אומדן מהנדס לפני הדיון.", decisionRef:null},
+      {title:"תעריפי שימוש באולם", presenter:"רותי כספי", minutes:"15 דקות", state:"טרם נדון",
+       summary:"התעריפים פגי תוקף מסוף 2025 וטרם חודשו.", decisionRef:null},
+      {title:"אישור פרוטוקול 12/2026", presenter:"יעל לביא", minutes:"5 דקות", state:"טרם נדון",
+       summary:"הפרוטוקול ממתין לאישור.", decisionRef:null}
+    ],
+    protocol:{
+      ref:"—", version:"—", state:"טרם נפתח", stateKind:"none",
+      title:"אין פרוטוקול לישיבה שטרם התכנסה",
+      subtitle:"הפרוטוקול נפתח אוטומטית מסדר היום ברגע פתיחת הישיבה",
+      clauses:[], history:[]
+    },
+    decisions:[]
+  },
+  {
+    id:"m3", bodyId:"infra", date:"13.08.2026", title:"ועדת תשתיות 5/2026", scope:"past",
+    status:"אושר", statusKind:"approved",
+    meta:"13.08.2026, 19:00 · מזכירות · יושב ראש: איתי ברק",
+    present:["איתי ברק","מיכל רז","דוד אלון","עמית שדה","רותי כספי"], absent:2,
+    agenda:[
+      {title:"הסכם תחזוקת הבריכה", presenter:"מיכל רז", minutes:"30 דקות", state:"הוכרע",
+       summary:"ההסכם אושר. תקופת ההתקשרות שנרשמה בטיוטה אינה תואמת את ההסכם החתום.",
+       decisionRef:"DEC-2026-0103", clause:"3"},
+      {title:"החלפת קו ביוב ברחוב האלון", presenter:"דוד אלון", minutes:"25 דקות", state:"נדחה",
+       summary:"ההכרעה נדחתה עד לקבלת אומדן.", decisionRef:null,
+       deferReason:"נדחה — האומדן חסר, ולא ניתן לקבוע אם הפריט בתוך תקרת הסמכות של הוועדה."}
+    ],
+    protocol:{
+      ref:"PRT-2026-0428", version:"1", state:"אושר ופורסם", stateKind:"approved",
+      title:"פרוטוקול ועדת תשתיות 5/2026",
+      subtitle:"13.08.2026, 19:00–20:05 · נכחו חמישה מתוך שבעה · נרשם בידי מיכל רז",
+      clauses:[
+        {num:"1", text:"היושב ראש פתח את הישיבה ואישר את המניין: נכחו חמישה מתוך שבעה."},
+        {num:"2", text:"הוצגה הצעת ההסכם לתחזוקת הבריכה."},
+        {num:"3", text:"ההסכם אושר לתקופה של 36 חודשים כפי שמופיע בהסכם החתום.",
+         noteLabel:"סתירה בין מקורות", note:"בטיוטת ההחלטה נרשמו 24 חודשים.", noteKind:"conflict"},
+        {num:"4", text:"הדיון בקו הביוב נדחה עד לקבלת אומדן מהנדס."}
+      ],
+      history:[
+        {label:"גרסה 1 — אושר ופורסם", who:"איתי ברק", date:"15.08.2026"},
+        {label:"נפתח מסדר היום", who:"רישום אוטומטי", date:"13.08.2026"}
+      ]
+    },
+    decisions:[
+      {ref:"DEC-2026-0103", title:"הסכם תחזוקת הבריכה", clause:"PRT-2026-0428 §3", cat:"סתירה בין מקורות", vote:"5–0", state:"בסקירה"},
+      {ref:"DEC-2026-0098", title:"החלפת קו ביוב ברחוב האלון", clause:"PRT-2026-0428 §4", cat:"נתון חסר", vote:"—", state:"נדחה"}
+    ]
+  },
+  {
+    id:"m4", bodyId:"edu", date:"15.08.2026", title:"ועדת חינוך 4/2026", scope:"past",
+    status:"פרוטוקול טיוטה", statusKind:"draft",
+    meta:"15.08.2026, 20:30 · גן הרימון · יושבת ראש: נועה שחר",
+    present:["נועה שחר","רותי כספי","עמית שדה","מיכל רז"], absent:1,
+    agenda:[
+      {title:"תוספת סייעת לגן הרימון", presenter:"נועה שחר", minutes:"20 דקות", state:"הוכרע",
+       summary:"התוספת אושרה. העלות החודשית הוזנה ידנית ללא מסמך מצורף.",
+       decisionRef:"DEC-2026-0088", clause:"2"},
+      {title:"תוכנית חוגי הקיץ", presenter:"רותי כספי", minutes:"25 דקות", state:"נדון",
+       summary:"התוכנית הוצגה ונשארה כטיוטה עד לאישור הוועדה.", decisionRef:"DEC-2026-0091", clause:"3"}
+    ],
+    protocol:{
+      ref:"PRT-2026-0431", version:"1", state:"טיוטה", stateKind:"draft",
+      title:"פרוטוקול ועדת חינוך 4/2026",
+      subtitle:"15.08.2026, 20:30–21:20 · נכחו ארבעה מתוך חמישה · נרשם בידי נועה שחר",
+      clauses:[
+        {num:"1", text:"היושבת ראש פתחה את הישיבה ואישרה את המניין: נכחו ארבעה מתוך חמישה."},
+        {num:"2", text:"אושרה תוספת סייעת לגן הרימון בעלות חודשית של ₪6,200.",
+         noteLabel:"הוזן ידנית", note:"הסכום הוזן ידנית ואינו נסמך על מסמך מצורף.", noteKind:"unverified"},
+        {num:"3", text:"תוכנית חוגי הקיץ הוצגה ותישאר כטיוטה עד אישור הוועדה."}
+      ],
+      history:[
+        {label:"גרסה 1 — טיוטה ראשונה", who:"נועה שחר", date:"15.08.2026"},
+        {label:"נפתח מסדר היום", who:"רישום אוטומטי", date:"15.08.2026"}
+      ]
+    },
+    decisions:[
+      {ref:"DEC-2026-0088", title:"תוספת סייעת לגן הרימון", clause:"PRT-2026-0431 §2", cat:"מקור לא מאומת", vote:"4–0", state:"בסקירה"},
+      {ref:"DEC-2026-0091", title:"תוכנית חוגי הקיץ", clause:"PRT-2026-0431 §3", cat:"בהמתנה לאישור גוף", vote:"—", state:"טיוטה"}
+    ]
+  }
+];
+
+const STATUS = {
+  draft:    {bg:"var(--color-working_orange)", fg:"#323338"},
+  approved: {bg:"var(--positive-color)",       fg:"#ffffff"},
+  open:     {bg:"var(--primary-selected-color)", fg:"var(--primary-text-color)"},
+  none:     {bg:"var(--ui-background-color)",  fg:"var(--secondary-text-color)"}
+};
+
+const AGENDA_STATE = {
+  "הוכרע":    {bg:"var(--positive-color-selected)", fg:"#0b3d24"},
+  "נדון":     {bg:"var(--primary-selected-color)",  fg:"var(--primary-text-color)"},
+  "נדחה":     {bg:"var(--negative-color-selected)", fg:"#7a1424"},
+  "טרם נדון": {bg:"var(--ui-background-color)",     fg:"var(--secondary-text-color)"}
+};
+
+class Component extends DCLogic {
+  state = {bodyId:"mgmt", meetingId:"m1", scope:"past", tab:"agenda", protoReason:"", approvedIds:{}};
+
+  body() { return BODIES.find(b => b.id === this.state.bodyId) || BODIES[0]; }
+  visible() { return MEETINGS.filter(m => m.bodyId === this.state.bodyId && m.scope === this.state.scope); }
+  meeting() {
+    const list = this.visible();
+    return list.find(m => m.id === this.state.meetingId) || list[0] || MEETINGS[0];
+  }
+
+  pickScope(scope) {
+    const first = MEETINGS.find(m => m.bodyId === this.state.bodyId && m.scope === scope);
+    this.setState({scope, meetingId: first ? first.id : null, tab:"agenda", protoReason:""});
+  }
+
+  renderVals() {
+    const s = this.state;
+    const b = this.body();
+    const m = this.meeting();
+    const p = m.protocol;
+    const seats = b.seats;
+    const present = m.present.length;
+    const quorumOk = present > seats / 2;
+    const approved = !!s.approvedIds[m.id] || p.stateKind === "approved";
+    const protoDisabled = !s.protoReason;
+
+    const cells = [];
+    for (let i = 0; i < seats; i++) {
+      cells.push(i < present
+        ? {color:"var(--positive-color)", title:"נוכח"}
+        : {color:"var(--ui-background-color)", title:"נעדר"});
+    }
+
+    const tabDefs = [
+      {id:"agenda", label:"סדר יום", count:(m.agenda || []).length},
+      {id:"protocol", label:"פרוטוקול", count:(p.clauses || []).length},
+      {id:"decisions", label:"החלטות", count:(m.decisions || []).length}
+    ];
+
+    return {
+      bodies: BODIES.map(x => ({id:x.id, name:x.name})),
+      bodyId: b.id,
+      bodyLine: b.name + " · " + seats + " מושבים",
+      onBodyChange: e => {
+        const id = e.target.value;
+        const first = MEETINGS.find(x => x.bodyId === id && x.scope === s.scope) || MEETINGS.find(x => x.bodyId === id);
+        this.setState({bodyId:id, scope: first ? first.scope : s.scope, meetingId: first ? first.id : null, tab:"agenda", protoReason:""});
+      },
+
+      scopes: [
+        {label:"התכנסו", key:"past", pressed: s.scope === "past",
+         bg: s.scope === "past" ? "var(--primary-selected-color)" : "transparent",
+         fg: "var(--primary-text-color)", onPick: () => this.pickScope("past")},
+        {label:"מתוכננות", key:"upcoming", pressed: s.scope === "upcoming",
+         bg: s.scope === "upcoming" ? "var(--primary-selected-color)" : "transparent",
+         fg: "var(--primary-text-color)", onPick: () => this.pickScope("upcoming")}
+      ],
+
+      meetingList: this.visible().map(x => {
+        const cur = x.id === m.id;
+        const st = STATUS[x.statusKind];
+        return {
+          date: x.date, title: x.title,
+          sub: x.present.length + " מתוך " + (BODIES.find(bb => bb.id === x.bodyId) || {seats:0}).seats + " נוכחים",
+          status: x.status, statusBg: st.bg, statusFg: st.fg,
+          current: cur ? "true" : null,
+          bg: cur ? "var(--primary-highlighted-color)" : "var(--primary-background-color)",
+          border: cur ? "var(--primary-color)" : "var(--layout-border-color)",
+          onPick: () => this.setState({meetingId: x.id, tab:"agenda", protoReason:""})
+        };
+      }),
+
+      meeting: {
+        title: m.title,
+        meta: m.meta,
+        quorumLabel: present + "/" + seats,
+        quorumState: quorumOk ? "מניין תקין" : "אין מניין",
+        quorumBg: quorumOk ? "var(--positive-color-selected)" : "var(--negative-color-selected)",
+        quorumFg: quorumOk ? "#0b3d24" : "#7a1424",
+        quorumCells: cells,
+        attendees: m.present.map(n => {
+          const w = PEOPLE[n] || {initials:"—", bg:"var(--color-american_gray)"};
+          return {initials:w.initials, bg:w.bg, fg:"#ffffff", title:n + " · נוכח"};
+        })
+      },
+
+      tabs: tabDefs.map(t => ({
+        label: t.label,
+        count: String(t.count),
+        showCount: t.count > 0,
+        current: s.tab === t.id ? "true" : null,
+        underline: s.tab === t.id ? "var(--primary-color)" : "transparent",
+        color: s.tab === t.id ? "var(--primary-text-color)" : "var(--secondary-text-color)",
+        font: s.tab === t.id ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
+        onPick: () => this.setState({tab: t.id})
+      })),
+
+      isAgenda: s.tab === "agenda",
+      isProtocol: s.tab === "protocol",
+      isDecisions: s.tab === "decisions",
+
+      agenda: (m.agenda || []).map((a, i) => {
+        const st = AGENDA_STATE[a.state] || AGENDA_STATE["טרם נדון"];
+        return {
+          num: String(i + 1),
+          title: a.title, presenter: a.presenter, minutes: a.minutes,
+          state: a.state, stateBg: st.bg, stateFg: st.fg,
+          summary: a.summary,
+          hasDecision: !!a.decisionRef,
+          decisionRef: a.decisionRef || "",
+          clause: a.clause || "",
+          deferred: !!a.deferReason,
+          deferReason: a.deferReason || ""
+        };
+      }),
+
+      protocol: {
+        ref: p.ref, version: p.version,
+        state: approved ? "אושר ופורסם" : p.state,
+        stateBg: (approved ? STATUS.approved : STATUS[p.stateKind]).bg,
+        stateFg: (approved ? STATUS.approved : STATUS[p.stateKind]).fg,
+        title: p.title, subtitle: p.subtitle,
+        clauses: (p.clauses || []).map(c => ({
+          num: c.num, text: c.text,
+          hasNote: !!c.noteLabel,
+          noteLabel: c.noteLabel || "",
+          note: c.note || "",
+          noteBg: c.noteKind === "conflict" ? "var(--color-sofia_pink)" : "var(--color-working_orange)",
+          noteFg: c.noteKind === "conflict" ? "#ffffff" : "#323338"
+        })),
+        history: p.history || []
+      },
+
+      approval: {
+        open: !approved && p.stateKind === "draft",
+        done: approved,
+        doneReason: s.approvedIds[m.id] || "אושר בישיבה שלאחריה",
+        hint: p.stateKind === "none"
+          ? "הפרוטוקול ייפתח מסדר היום ברגע שהישיבה תתכנס."
+          : approved
+            ? "הפרוטוקול פורסם לחברי הגוף ואינו נערך עוד."
+            : "אישור הפרוטוקול מקפיא את נוסחו ומפרסם אותו לחברי הגוף.",
+        reasons: PROTO_REASONS,
+        reason: s.protoReason,
+        onReason: e => this.setState({protoReason: e.target.value}),
+        disabled: protoDisabled,
+        bg: protoDisabled ? "var(--disabled-background-color)" : "var(--positive-color)",
+        fg: protoDisabled ? "var(--disabled-text-color)" : "var(--text-color-on-primary)",
+        cursor: protoDisabled ? "not-allowed" : "pointer",
+        gate: protoDisabled ? "נימוק הוא שדה חובה, גם באישור" : "האישור יירשם בשמך ויוקפא",
+        onApprove: () => this.setState(st => ({
+          approvedIds: {...st.approvedIds, [m.id]: st.protoReason},
+          protoReason: ""
+        }))
+      },
+
+      decisions: (m.decisions || []).map(d => {
+        const c = CAT[d.cat] || CAT["ללא סימון"];
+        return {
+          ...d,
+          catBg: c.bg, catFg: c.fg,
+          stateColor: d.state === "נדחה" ? "var(--negative-color)" : "var(--primary-text-color)"
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

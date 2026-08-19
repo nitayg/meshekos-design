@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--allgrey-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input,textarea{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--allgrey-background-color);display:grid;grid-template-columns:250px minmax(0,1fr);align-items:start">
+  <dc-import name="Rail" current="review" hint-size="250px,100vh"></dc-import>
+  <div style="min-width:0;display:flex;flex-direction:column;min-height:100vh">
+
+  <a href="#draft" style="position:absolute;inset-inline-start:-9999px;top:8px;background:var(--inverted-color-background);color:#fff;padding:8px 14px;border-radius:var(--border-radius-4);z-index:30">דילוג לטיוטה</a>
+
+  <header style="background:var(--primary-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-12) var(--space-24);display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+    <img src="assets/meshekos-logo.png" alt="MeshekOS" style="display:block;height:34px;width:auto;border-radius:var(--border-radius-4)">
+    <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+      <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+        <h1 style="font:var(--font-h3-bold)">{{ itemTitle }}</h1>
+        <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;color:var(--secondary-text-color)">{{ itemRef }}</span>
+        <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ catBg }};color:{{ catFg }};font:var(--font-text2-normal)">{{ category }}</span>
+      </div>
+      <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ bodyLine }}</div>
+    </div>
+        <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-8)">
+      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ progressLabel }}</span>
+      <button type="button" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);padding:var(--space-4) var(--space-8);height:32px;line-height:24px;font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">הפריט הבא</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ showConflict }}" hint-placeholder-val="{{ true }}">
+    <div role="status" style="background:var(--primary-highlighted-color);border-bottom:1px solid var(--primary-color);padding:var(--space-8) var(--space-24);display:flex;align-items:center;gap:var(--space-12);flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--primary-color);color:var(--fixed-light-color);font:var(--font-text2-normal)">המקור עודכן</span>
+      <span style="font:var(--font-text2-normal)">מיכל רז החליפה את מסמך המקור לגרסה חתומה לפני 4 דקות. השדות המסומנים למטה מושווים לגרסה הקודמת.</span>
+      <button type="button" onClick="{{ onRefresh }}" style="margin-inline-start:auto;background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);padding:var(--space-4) var(--space-8);height:32px;line-height:24px;font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">רענון המקור</button>
+    </div>
+  </sc-if>
+
+  <div style="flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;background:var(--layout-border-color);align-items:start">
+
+    <section id="draft" aria-label="טיוטה — הצד שנערך" style="order:2;background:var(--primary-background-color);padding:var(--space-20) var(--space-24) var(--space-32);min-height:calc(100vh - 120px);box-sizing:border-box">
+      <div style="display:flex;align-items:baseline;gap:var(--space-8);margin-bottom:var(--space-4)">
+        <h2 style="font:var(--font-h3-bold)">טיוטה</h2>
+        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">הצד הנערך · מקבל את מסלול המקלדת</span>
+      </div>
+      <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0 0 var(--space-16);max-width:62ch">Tab עובר בין שדות הטיוטה בלבד. המקור נגיש לקריאה ולניווט, אך אינו חלק ממסלול העריכה.</p>
+
+      <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="6">
+          <div style="border:1px solid {{ f.borderColor }};border-radius:var(--border-radius-8);padding:var(--space-12);background:{{ f.cardBg }}">
+            <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-8)">
+              <label for="{{ f.inputId }}" style="font:var(--font-text2-medium)">{{ f.label }}</label>
+              <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ f.diffBg }};color:{{ f.diffFg }};font:var(--font-text3-normal)">{{ f.diffLabel }}</span>
+              <sc-if value="{{ f.isConflict }}" hint-placeholder-val="{{ false }}">
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">· נגע בו עדכון המקור</span>
+              </sc-if>
+            </div>
+
+            <input id="{{ f.inputId }}" type="text" value="{{ f.value }}" onChange="{{ f.onChange }}" dir="{{ f.dir }}" style="width:100%;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);font-family:{{ f.fontFamily }};color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in;unicode-bidi:isolate" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+
+            <sc-if value="{{ f.differs }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:var(--space-8);display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">במקור:</span>
+                <span dir="{{ f.dir }}" style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;unicode-bidi:isolate;font:var(--font-text2-normal);font-family:{{ f.fontFamily }};background:var(--positive-color-selected)">{{ f.sourceValue }}</span>
+                <button type="button" onClick="{{ f.onTakeSource }}" style="background:transparent;color:var(--primary-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">קבלי את המקור</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ f.absent }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:var(--space-8) 0 0;font:var(--font-text3-normal);color:var(--secondary-text-color)">אין לשדה זה אח במסמך המקור. הכרעה עליו נרשמת כהוספה ידנית.</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section aria-label="מסמך מקור" style="order:1;background:var(--primary-background-color);padding:var(--space-20) var(--space-24) var(--space-32);min-height:calc(100vh - 120px);box-sizing:border-box">
+      <div style="display:flex;align-items:baseline;gap:var(--space-8);margin-bottom:var(--space-4)">
+        <h2 style="font:var(--font-h3-bold)">מסמך מקור</h2>
+        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">לקריאה בלבד</span>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-16);margin:var(--space-12) 0 var(--space-16);padding-bottom:var(--space-12);border-bottom:1px solid var(--layout-border-color)">
+        <sc-for list="{{ sourceMeta }}" as="m" hint-placeholder-count="4">
+          <div>
+            <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ m.label }}</div>
+            <div dir="{{ m.dir }}" style="unicode-bidi:isolate;font:var(--font-text2-normal);font-family:{{ m.fontFamily }}">{{ m.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <article style="font:var(--font-text1-normal);line-height:26px;max-width:62ch;text-wrap:pretty">
+        <p style="margin:0 0 var(--space-12);color:var(--secondary-text-color);font:var(--font-text3-normal)">ציטוט מפרוטוקול ישיבת הנהלת הקהילה, סעיף 4</p>
+        <p style="margin:0 0 var(--space-12)">הנהלת הקהילה דנה בהרחבת שעות הפעילות של מרכז הצעירים בימים א׳–ה׳ עד השעה 22:00, בעקבות פנייה של ועד ההורים.</p>
+        <p style="margin:0 0 var(--space-12)">הוצג אומדן עלות שנתי בסך <mark style="background:var(--warning-color);color:#323338;padding:0 3px;border-radius:2px">₪172,000</mark>, הכולל שעות הפעלה, אבטחה וניקיון. הגזברות ציינה כי האומדן אינו כולל תחזוקת מיזוג.</p>
+        <p style="margin:0 0 var(--space-12)">הוחלט לאשר את ההרחבה החל מ־<mark style="background:var(--warning-color);color:#323338;padding:0 3px;border-radius:2px">01.10.2026</mark>, בכפוף להשלמת אומדן המיזוג ולאישור ועדת תשתיות.</p>
+        <p style="margin:0">נרשם בידי איתי ברק. הפרוטוקול אושר בישיבה שלאחריה ללא תיקונים.</p>
+      </article>
+
+      <div style="margin-top:var(--space-16);display:flex;gap:var(--space-8);flex-wrap:wrap">
+        <button type="button" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">פתיחת המסמך המלא</button>
+        <button type="button" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">היסטוריית גרסאות</button>
+      </div>
+    </section>
+  </div>
+
+  <div style="position:sticky;bottom:0;background:var(--primary-background-color);border-top:1px solid var(--layout-border-color);box-shadow:var(--box-shadow-xs);padding:var(--space-12) var(--space-24);display:flex;align-items:flex-end;gap:var(--space-16);flex-wrap:wrap;z-index:10">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:150px">
+      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">הכרעה</span>
+      <div style="display:flex;gap:var(--space-4)">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+          <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.pressed }}" style="background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.border }};border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer">{{ m.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);min-width:260px">
+      <label for="decision-reason" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">{{ reasonLabel }}</label>
+      <select id="decision-reason" value="{{ reason }}" onChange="{{ onReasonChange }}" style="background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+        <option value="">— בחרי נימוק —</option>
+        <sc-for list="{{ reasonOptions }}" as="r" hint-placeholder-count="5">
+          <option value="{{ r }}">{{ r }}</option>
+        </sc-for>
+      </select>
+    </div>
+
+    <sc-if value="{{ needsNote }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);flex:1;min-width:240px">
+        <label for="decision-note" style="font:var(--font-text2-normal);color:var(--primary-text-color);padding-block:2px">פירוט (חובה כשנבחר ״אחר״)</label>
+        <input id="decision-note" type="text" value="{{ note }}" onChange="{{ onNoteChange }}" placeholder="במה מדובר" aria-invalid="{{ noteInvalid }}" style="background:var(--secondary-background-color);border:1px solid {{ noteBorder }};border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:{{ noteBorderHover }}" style-focus="border-color:{{ noteBorderFocus }}">
+      </div>
+    </sc-if>
+
+    <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-12)">
+      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color);max-width:34ch">{{ gateHint }}</span>
+      <button type="button" disabled="{{ submitDisabled }}" onClick="{{ onSubmit }}" style="background:{{ submitBg }};color:{{ submitFg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:{{ submitCursor }}">{{ submitLabel }}</button>
+    </div>
+  </div>
+
+  <sc-if value="{{ recorded }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:fixed;inset-block-start:0;left:50%;transform:translateX(-50%);margin:var(--space-16);margin-inline:auto;min-width:200px;background:var(--inverted-color-background);color:var(--text-color-on-inverted);border-radius:var(--border-radius-small);box-shadow:var(--box-shadow-medium);padding:var(--space-8);display:flex;align-items:center;z-index:20">
+      <span style="margin:0 var(--space-8);flex:1;font:var(--font-text2-normal)"><b style="font-weight:600">{{ recordedTitle }}</b> · {{ recordedReason }}</span>
+      <button type="button" onClick="{{ onUndo }}" style="margin-inline-start:var(--space-8);background:transparent;border:0;color:var(--text-color-on-inverted);text-decoration:underline;font:var(--font-text2-normal);cursor:pointer;padding:0">ביטול</button>
+    </div>
+  </sc-if>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;showConflict&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;מצבים&quot;}}">
+const REJECT_REASONS = ["חריגה מסמכות הגוף","פגם בהליך","חסר מסמך מקור","סתירה להחלטה קודמת","שיקול תקציבי","אחר"];
+const APPROVE_REASONS = ["אומת מול מסמך מקור","אושר בישיבת הגוף","הוצגה אסמכתא משלימה","מצב מוצהר ומתועד","אחר"];
+
+const MONO = "ui-monospace, monospace";
+const SANS = "inherit";
+
+const FIELDS = [
+  {key:"title",   label:"שם ההחלטה", source:"הרחבת שעות פעילות מרכז הצעירים", draft:"הרחבת שעות פעילות מרכז הצעירים"},
+  {key:"budget",  label:"אומדן עלות שנתי", source:"₪172,000", draft:"₪184,000", dir:"ltr", mono:true, conflict:true},
+  {key:"start",   label:"מועד תחילה", source:"01.10.2026", draft:"01.09.2026", dir:"ltr", mono:true, conflict:true},
+  {key:"approver",label:"גוף מאשר", source:"הנהלת הקהילה", draft:"הנהלת הקהילה"},
+  {key:"ref",     label:"מזהה אסמכתא", source:"PRT-2026-0433", draft:"PRT-2026-0433", dir:"ltr", mono:true},
+  {key:"aircon",  label:"אומדן תחזוקת מיזוג", source:null, draft:"₪14,500", dir:"ltr", mono:true}
+];
+
+const SOURCE_META = [
+  {label:"מסמך", value:"פרוטוקול ישיבה 12/2026"},
+  {label:"מזהה", value:"PRT-2026-0433", dir:"ltr", mono:true},
+  {label:"תאריך אישור", value:"07.08.2026", dir:"ltr", mono:true},
+  {label:"סעיף", value:"4", dir:"ltr", mono:true}
+];
+
+class Component extends DCLogic {
+  state = {
+    values: FIELDS.reduce((a,f) => (a[f.key] = f.draft, a), {}),
+    mode: null, reason:"", note:"", recorded:null, conflictOpen:true
+  };
+
+  renderVals() {
+    const s = this.state;
+    const isReject = s.mode === "reject";
+    const needsNote = s.reason === "אחר";
+    const blocked = !s.mode || !s.reason || (needsNote && !s.note.trim());
+
+    const gate = !s.mode ? "בחרי אישור או דחייה כדי להמשיך"
+      : !s.reason ? "נימוק הוא שדה חובה בכל הכרעה, גם באישור"
+      : needsNote && !s.note.trim() ? "השלימי את הפירוט עבור ״אחר״"
+      : "ההכרעה תירשם בשמך ותיווסף לרשומת הפריט";
+
+    return {
+      itemTitle: "הרחבת שעות פעילות מרכז הצעירים",
+      itemRef: "DEC-2026-0114",
+      category: "סתירה בין מקורות",
+      catBg: "var(--color-sofia_pink)",
+      catFg: "#ffffff",
+      bodyLine: "הנהלת הקהילה · נרשם בידי איתי ברק · תור סקירה",
+      progressLabel: "פריט 1 מתוך 5",
+
+      showConflict: (this.props.showConflict ?? true) && s.conflictOpen,
+      onRefresh: () => this.setState({conflictOpen:false}),
+
+      sourceMeta: SOURCE_META.map(m => ({...m, dir: m.dir || "rtl", fontFamily: m.mono ? MONO : SANS})),
+
+      fields: FIELDS.map(f => {
+        const value = s.values[f.key];
+        const absent = f.source === null;
+        const differs = !absent && value !== f.source;
+        const flagged = differs || absent;
+        return {
+          label: f.label,
+          inputId: "f-" + f.key,
+          value,
+          dir: f.dir || "rtl",
+          fontFamily: f.mono ? MONO : SANS,
+          sourceValue: f.source,
+          differs,
+          absent,
+          isConflict: !!f.conflict && (this.props.showConflict ?? true) && s.conflictOpen,
+          diffLabel: absent ? "אין במקור" : differs ? "שונה מהמקור" : "זהה למקור",
+          diffBg: absent ? "var(--warning-color)" : differs ? "var(--negative-color-selected)" : "var(--positive-color-selected)",
+          diffFg: absent ? "#323338" : differs ? "#7a1424" : "#0b3d24",
+          borderColor: flagged ? "var(--ui-border-color)" : "var(--layout-border-color)",
+          cardBg: flagged ? "var(--allgrey-background-color)" : "var(--primary-background-color)",
+          onChange: e => this.setState(st => ({values: {...st.values, [f.key]: e.target.value}})),
+          onTakeSource: () => this.setState(st => ({values: {...st.values, [f.key]: f.source}}))
+        };
+      }),
+
+      modes: [
+        {label:"אישור", key:"approve", pressed: s.mode === "approve",
+         bg: s.mode === "approve" ? "var(--positive-color-selected)" : "transparent",
+         fg: "var(--positive-color)", border: "var(--positive-color)",
+         onPick: () => this.setState({mode:"approve", reason:"", note:""})},
+        {label:"דחייה", key:"reject", pressed: s.mode === "reject",
+         bg: s.mode === "reject" ? "var(--negative-color-selected)" : "transparent",
+         fg: "var(--negative-color)", border: "var(--negative-color)",
+         onPick: () => this.setState({mode:"reject", reason:"", note:""})}
+      ],
+
+      reasonLabel: isReject ? "נימוק הדחייה" : "נימוק ההכרעה",
+      reasonOptions: isReject ? REJECT_REASONS : APPROVE_REASONS,
+      reason: s.reason,
+      note: s.note,
+      needsNote,
+      noteInvalid: needsNote && !s.note.trim() ? "true" : "false",
+      noteBorder: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--ui-border-color)",
+      noteBorderHover: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--primary-text-color)",
+      noteBorderFocus: needsNote && !s.note.trim() ? "var(--negative-color)" : "var(--primary-color)",
+      onReasonChange: e => this.setState({reason: e.target.value}),
+      onNoteChange: e => this.setState({note: e.target.value}),
+
+      gateHint: gate,
+      submitDisabled: blocked,
+      submitLabel: isReject ? "רשמי דחייה" : "רשמי הכרעה",
+      submitBg: blocked ? "var(--disabled-background-color)" : (isReject ? "var(--negative-color)" : "var(--positive-color)"),
+      submitFg: blocked ? "var(--disabled-text-color)" : "var(--text-color-on-primary)",
+      submitCursor: blocked ? "not-allowed" : "pointer",
+      onSubmit: () => this.setState({
+        recorded: {
+          title: isReject ? "הפריט נדחה" : "ההכרעה נרשמה",
+          reason: s.reason === "אחר" ? "אחר — " + s.note.trim() : s.reason
+        },
+        mode:null, reason:"", note:""
+      }),
+
+      recorded: !!s.recorded,
+      recordedTitle: s.recorded ? s.recorded.title : "",
+      recordedReason: s.recorded ? s.recorded.reason : "",
+      onUndo: () => this.setState({recorded:null})
+    };
+  }
+}
+</script>
+</body>
+</html>

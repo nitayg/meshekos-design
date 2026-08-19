@@ -1,0 +1,116 @@
+/* Tokens lifted from monday.com's open-source Vibe design system (MIT):
+   github.com/mondaycom/vibe — packages/style/src/{themes/light-theme,typography,spacing,border-radius,motion}.scss
+   Values are verbatim; only the subset this project uses is included. */
+:root {
+  --primary-color: #0073ea;
+  --primary-hover-color: #0060b9;
+  --primary-selected-color: #cce5ff;
+  --primary-selected-hover-color: #aed4fc;
+  --primary-highlighted-color: #f0f7ff;
+
+  --primary-text-color: #323338;
+  --secondary-text-color: #676879;
+  --text-color-on-primary: #ffffff;
+  --link-color: #1f76c2;
+  --icon-color: #676879;
+  --placeholder-color: #676879;
+
+  --primary-background-color: #ffffff;
+  --secondary-background-color: #ffffff;
+  --primary-background-hover-color: rgba(103, 104, 121, 0.1);
+  --allgrey-background-color: #f6f7fb;
+  --grey-background-color: #f6f7fb;
+  --ui-border-color: #c3c6d4;
+  --ui-background-color: #e7e9ef;
+  --ui-background-hover-color: #d8d9e0;
+  --layout-border-color: #d0d4e4;
+  --disabled-background-color: #ecedf5;
+  --disabled-component-opacity: 0.38;
+  --disabled-text-color: rgba(50, 51, 56, var(--disabled-component-opacity));
+  --backdrop-color: rgba(41, 47, 76, 0.7);
+  --inverted-color-background: #323338;
+  --text-color-on-inverted: #ffffff;
+  --fixed-dark-color: #323338;
+  --fixed-light-color: #ffffff;
+
+  --positive-color: #00854d;
+  --positive-color-hover: #007038;
+  --positive-color-selected: #bbdbc9;
+  --negative-color: #d83a52;
+  --negative-color-hover: #b63546;
+  --negative-color-selected: #f4c3cb;
+  --warning-color: #ffcb00;
+  --warning-color-hover: #eaaa15;
+
+  /* status palette */
+  --color-done-green: #00c875;
+  --color-grass_green: #037f4c;
+  --color-egg_yolk: #ffcb00;
+  --color-working_orange: #fdab3d;
+  --color-dark-orange: #ff6d3b;
+  --color-stuck-red: #df2f4a;
+  --color-dark-red: #bb3354;
+  --color-sofia_pink: #e50073;
+  --color-dark_purple: #784bd1;
+  --color-navy: #225091;
+  --color-bright-blue: #579bfc;
+  --color-dark-blue: #007eb5;
+  --color-berry: #7e3b8a;
+  --color-teal: #175a63;
+  --color-american_gray: #757575;
+  --color-explosive: #c4c4c4;
+  --color-wolf_gray: #c3c6d4;
+  --color-riverstone_gray: #f6f7fb;
+  --color-mud_black: #323338;
+  --color-asphalt: #676879;
+
+  --box-shadow-xs: 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --box-shadow-small: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  --box-shadow-medium: 0px 6px 20px rgba(0, 0, 0, 0.2);
+
+  --font-family: Figtree, "Noto Sans Hebrew", Roboto, sans-serif;
+  --title-font-family: Poppins, "Noto Sans Hebrew", Roboto, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-bold: 500;
+
+  --font-h1-bold: 700 32px/40px var(--title-font-family);
+  --font-h2-bold: 700 24px/30px var(--title-font-family);
+  --font-h3-bold: 700 18px/24px var(--title-font-family);
+  --font-text1-normal: 400 16px/22px var(--font-family);
+  --font-text1-medium: 600 16px/22px var(--font-family);
+  --font-text2-normal: 400 14px/20px var(--font-family);
+  --font-text2-medium: 600 14px/20px var(--font-family);
+  --font-text2-bold: 700 14px/20px var(--font-family);
+  --font-text3-normal: 400 12px/16px var(--font-family);
+  --font-text3-medium: 600 12px/16px var(--font-family);
+
+  --letter-spacing-h1-bold: -0.5px;
+  --letter-spacing-h2-bold: -0.1px;
+
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  --border-radius-4: 4px;
+  --border-radius-8: 8px;
+  --border-radius-12: 12px;
+  --border-radius-16: 16px;
+  --border-radius-small: var(--border-radius-4);
+  --border-radius-medium: var(--border-radius-8);
+  --border-radius-big: var(--border-radius-16);
+
+  --motion-productive-short: 70ms;
+  --motion-productive-medium: 100ms;
+  --motion-productive-long: 150ms;
+  --motion-expressive-short: 250ms;
+  --motion-timing-enter: cubic-bezier(0, 0, 0.35, 1);
+  --motion-timing-transition: cubic-bezier(0.4, 0, 0.2, 1);
+}
