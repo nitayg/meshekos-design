@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ds/vibe-tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap">
+<style>
+html{direction:rtl}
+body{margin:0;background:var(--allgrey-background-color);color:var(--primary-text-color);font:var(--font-text2-normal);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--title-font-family);margin:0}
+a{color:var(--link-color);text-decoration:none}
+a:hover{color:var(--primary-hover-color)}
+button,select,input,textarea{font-family:inherit}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px;border-radius:var(--border-radius-4)}
+::selection{background:var(--primary-selected-color)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:var(--allgrey-background-color);display:grid;grid-template-columns:250px minmax(0,1fr);align-items:start">
+  <dc-import name="Rail" current="transcribe" hint-size="250px,100vh"></dc-import>
+
+  <div style="min-width:0">
+
+    <header style="background:var(--primary-background-color);border-bottom:1px solid var(--layout-border-color);padding:var(--space-12) var(--space-24);display:flex;align-items:center;gap:var(--space-16);flex-wrap:wrap">
+      <div>
+        <h1 style="font:var(--font-h3-bold)">תמלול — ישיבת הנהלה 13/2026</h1>
+        <div style="font:var(--font-text3-normal);color:var(--secondary-text-color)">הנהלת הקהילה · 26.08.2026, 20:00 · חדר הישיבות</div>
+      </div>
+
+      <div role="group" aria-label="מצב עבודה" style="display:flex;border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);overflow:hidden;margin-inline-start:var(--space-8)">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+          <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.pressed }}" style="background:{{ m.bg }};color:var(--primary-text-color);border:0;height:32px;padding:0 var(--space-12);font:{{ m.font }};cursor:pointer">{{ m.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="margin-inline-start:auto;display:flex;align-items:center;gap:var(--space-12)">
+        <sc-if value="{{ recording }}" hint-placeholder-val="{{ false }}">
+          <span style="display:inline-flex;align-items:center;gap:var(--space-8);font:var(--font-text2-normal)">
+            <span style="width:10px;height:10px;border-radius:50%;background:var(--negative-color)"></span>
+            <span>מקליט</span>
+            <span dir="ltr" style="unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-family:ui-monospace,monospace">{{ clock }}</span>
+          </span>
+        </sc-if>
+        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ headerNote }}</span>
+      </div>
+    </header>
+
+    <sc-if value="{{ isLive }}" hint-placeholder-val="{{ true }}">
+      <div>
+
+        <sc-if value="{{ needsConsent }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:var(--space-24)">
+            <div style="max-width:660px;background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-24)">
+              <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:var(--warning-color);color:var(--fixed-dark-color);font:var(--font-text2-normal);margin-bottom:var(--space-12)">ההקלטה טרם אושרה</span>
+              <h2 style="font:var(--font-h3-bold);margin-bottom:var(--space-8)">אישור הקלטה בידי יושב הראש</h2>
+              <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-16);max-width:62ch">התמלול אינו מתחיל לפני אישור מפורש. האישור נרשם בשם יושב הראש ומופיע ביומן הביקורת של הישיבה.</p>
+
+              <div style="border-top:1px solid var(--layout-border-color);padding-top:var(--space-16);margin-bottom:var(--space-16)">
+                <h3 style="font:var(--font-text1-medium);margin-bottom:var(--space-4)">סירוב להקלטה</h3>
+                <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0 0 var(--space-12);max-width:62ch">חבר שמסרב מתומלל כרגיל, וליד הקטעים שלו מופיע סימון סירוב. הסימון נשמר ביומן הביקורת ואינו מופיע בפרוטוקול המפורסם.</p>
+                <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+                  <sc-for list="{{ members }}" as="p" hint-placeholder-count="7">
+                    <label style="display:flex;align-items:center;gap:var(--space-8);font:var(--font-text2-normal);cursor:pointer">
+                      <input type="checkbox" checked="{{ p.refused }}" onChange="{{ p.onToggleRefuse }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
+                      <span style="width:24px;height:24px;border-radius:50%;background:{{ p.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ p.initials }}</span>
+                      <span>{{ p.name }}</span>
+                      <span style="color:var(--secondary-text-color);font:var(--font-text3-normal)">{{ p.roleLabel }}</span>
+                    </label>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:var(--space-12);flex-wrap:wrap">
+                <button type="button" onClick="{{ onConsent }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">איתי ברק מאשר הקלטה</button>
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ refusalNote }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ consented }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:300px minmax(0,1fr) 280px;gap:1px;background:var(--layout-border-color);align-items:start">
+
+            <aside aria-label="סדר יום" style="background:var(--primary-background-color);padding:var(--space-16);min-height:calc(100vh - 60px);box-sizing:border-box">
+              <h2 style="font:var(--font-text1-medium);margin-bottom:var(--space-12)">סדר יום</h2>
+              <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-8)">
+                <sc-for list="{{ agenda }}" as="a" hint-placeholder-count="3">
+                  <li>
+                    <button type="button" onClick="{{ a.onPick }}" aria-current="{{ a.current }}" style="width:100%;text-align:start;background:{{ a.bg }};border:1px solid {{ a.border }};border-radius:var(--border-radius-8);padding:var(--space-12);cursor:pointer;display:flex;flex-direction:column;gap:var(--space-4)" style-hover="border-color:var(--primary-text-color)">
+                      <span style="display:flex;align-items:center;gap:var(--space-8);width:100%">
+                        <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ a.num }}</span>
+                        <span style="margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:{{ a.timeBg }};color:{{ a.timeFg }};font:var(--font-text3-normal);font-variant-numeric:tabular-nums" dir="ltr">{{ a.timeLabel }}</span>
+                      </span>
+                      <span style="font:var(--font-text2-medium)">{{ a.title }}</span>
+                      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ a.presenter }}</span>
+                    </button>
+                  </li>
+                </sc-for>
+              </ul>
+
+              <div style="margin-top:var(--space-20);border-top:1px solid var(--layout-border-color);padding-top:var(--space-16)">
+                <h3 style="font:var(--font-text2-medium);margin-bottom:var(--space-8)">רגעים מסומנים</h3>
+                <sc-if value="{{ hasBookmarks }}" hint-placeholder-val="{{ false }}">
+                  <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-4)">
+                    <sc-for list="{{ bookmarks }}" as="bm" hint-placeholder-count="2">
+                      <li style="display:flex;gap:var(--space-8);font:var(--font-text3-normal)">
+                        <span dir="ltr" style="unicode-bidi:isolate;font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--secondary-text-color)">{{ bm.at }}</span>
+                        <span>{{ bm.label }}</span>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </sc-if>
+                <sc-if value="{{ noBookmarks }}" hint-placeholder-val="{{ true }}">
+                  <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0">אין רגעים מסומנים. סימון רגע שומר את הזמן ואת הסעיף הנוכחי כדי לחזור אליו בעריכת הפרוטוקול.</p>
+                </sc-if>
+              </div>
+            </aside>
+
+            <section aria-label="תמלול" style="background:var(--primary-background-color);padding:var(--space-16) var(--space-20);min-height:calc(100vh - 60px);box-sizing:border-box">
+              <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:var(--space-12)">
+                <h2 style="font:var(--font-text1-medium)">תמלול זורם</h2>
+                <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">מילים שהתמלול אינו בטוח בהן מסומנות בקו מקווקו. הסימון נשאר בתמלול ואינו הופך לקטגוריית אי-ודאות של הפריט.</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+                <sc-for list="{{ segments }}" as="sg" hint-placeholder-count="4">
+                  <article style="display:flex;gap:var(--space-12)">
+                    <div style="width:82px;flex:none;display:flex;flex-direction:column;gap:2px;align-items:flex-start">
+                      <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--secondary-text-color)">{{ sg.at }}</span>
+                      <span style="display:flex;align-items:center;gap:var(--space-4)">
+                        <span style="width:22px;height:22px;border-radius:50%;background:{{ sg.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ sg.initials }}</span>
+                      </span>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin-bottom:2px">
+                        <span style="font:var(--font-text2-medium)">{{ sg.speaker }}</span>
+                        <sc-if value="{{ sg.refused }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:var(--negative-color-selected);color:#7a1424;font:var(--font-text3-normal)">סירב להקלטה</span>
+                        </sc-if>
+                      </div>
+                      <p style="margin:0;font:var(--font-text1-normal);line-height:26px;max-width:74ch;text-wrap:pretty">
+                        <sc-for list="{{ sg.parts }}" as="w" hint-placeholder-count="3">
+                          <span style="{{ w.style }}">{{ w.text }}</span>
+                        </sc-for>
+                      </p>
+                    </div>
+                  </article>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ awaitingSpeech }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:var(--space-16) 0 0;font:var(--font-text3-normal);color:var(--secondary-text-color)">ממתין לדיבור…</p>
+              </sc-if>
+            </section>
+
+            <aside aria-label="נוכחות והצבעות" style="background:var(--primary-background-color);padding:var(--space-16);min-height:calc(100vh - 60px);box-sizing:border-box;display:flex;flex-direction:column;gap:var(--space-20)">
+              <div>
+                <div style="display:flex;align-items:baseline;gap:var(--space-8);margin-bottom:var(--space-8)">
+                  <h2 style="font:var(--font-text1-medium)">מניין</h2>
+                  <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-medium);font-variant-numeric:tabular-nums">{{ quorumLabel }}</span>
+                  <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius-small);padding:2px var(--space-8);background:{{ quorumBg }};color:{{ quorumFg }};font:var(--font-text2-normal)">{{ quorumState }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+                  <sc-for list="{{ members }}" as="p" hint-placeholder-count="7">
+                    <label style="display:flex;align-items:center;gap:var(--space-8);font:var(--font-text2-normal);cursor:pointer">
+                      <input type="checkbox" checked="{{ p.present }}" onChange="{{ p.onTogglePresent }}" style="width:16px;height:16px;accent-color:var(--primary-color);cursor:pointer">
+                      <span style="width:22px;height:22px;border-radius:50%;background:{{ p.bg }};color:#fff;display:grid;place-items:center;font:var(--font-text3-normal);flex:none">{{ p.initials }}</span>
+                      <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <sc-if value="{{ p.refused }}" hint-placeholder-val="{{ false }}">
+                        <span title="סירב להקלטה" style="margin-inline-start:auto;font:var(--font-text3-normal);color:var(--negative-color)">סירוב</span>
+                      </sc-if>
+                    </label>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--layout-border-color);padding-top:var(--space-16)">
+                <h2 style="font:var(--font-text1-medium);margin-bottom:var(--space-4)">הצבעה על הסעיף הנוכחי</h2>
+                <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0 0 var(--space-12)">ההצבעה נרשמת בשמות ומופיעה כך בפרוטוקול.</p>
+
+                <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+                  <sc-for list="{{ voters }}" as="v" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:var(--space-4)">
+                      <span style="flex:1;min-width:0;font:var(--font-text2-normal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</span>
+                      <sc-for list="{{ v.options }}" as="o" hint-placeholder-count="3">
+                        <button type="button" onClick="{{ o.onPick }}" aria-pressed="{{ o.pressed }}" title="{{ o.title }}" style="width:30px;height:26px;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.fg }};border-radius:var(--border-radius-small);font:var(--font-text3-normal);cursor:pointer">{{ o.short }}</button>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="margin-top:var(--space-12);display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                  <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-medium);font-variant-numeric:tabular-nums">{{ tally }}</span>
+                  <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ tallyNote }}</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div style="position:sticky;bottom:0;background:var(--primary-background-color);border-top:1px solid var(--layout-border-color);box-shadow:var(--box-shadow-xs);padding:var(--space-12) var(--space-24);display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;z-index:10">
+            <button type="button" onClick="{{ onToggleRecord }}" style="background:{{ recordBg }};color:{{ recordFg }};border:1px solid {{ recordBorder }};border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer">{{ recordLabel }}</button>
+            <button type="button" onClick="{{ onBookmark }}" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">סימון רגע</button>
+            <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ liveHint }}</span>
+            <button type="button" onClick="{{ onFinish }}" style="margin-inline-start:auto;background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">סיום והפקת טיוטה</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPost }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:var(--space-20) var(--space-24) var(--space-64)">
+
+        <sc-if value="{{ noUpload }}" hint-placeholder-val="{{ true }}">
+          <div style="max-width:620px;background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-32)">
+            <h2 style="font:var(--font-h3-bold);margin-bottom:var(--space-8)">העלאת הקלטה של ישיבה שהתקיימה</h2>
+            <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-16);max-width:60ch">גם כאן נדרש אישור יושב הראש, והוא נרשם בדיעבד עם מועד ההעלאה. קבצי שמע עד 4 שעות.</p>
+            <div style="border:1px dashed var(--ui-border-color);border-radius:var(--border-radius-8);padding:var(--space-24);text-align:center;margin-bottom:var(--space-16)">
+              <p style="font:var(--font-text2-normal);margin:0 0 var(--space-8)">גרירת קובץ לכאן</p>
+              <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0">m4a · mp3 · wav</p>
+            </div>
+            <button type="button" onClick="{{ onUpload }}" style="background:var(--primary-color);color:var(--text-color-on-primary);border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--primary-hover-color)">בחירת קובץ לדוגמה</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ processing }}" hint-placeholder-val="{{ false }}">
+          <div aria-live="polite" style="max-width:620px;background:var(--primary-background-color);border:1px solid var(--layout-border-color);border-radius:var(--border-radius-8);padding:var(--space-24)">
+            <h2 style="font:var(--font-text1-medium);margin-bottom:var(--space-8)">מתמלל…</h2>
+            <div style="height:8px;background:var(--ui-background-color);border-radius:var(--border-radius-4);overflow:hidden;margin-bottom:var(--space-8)">
+              <span style="display:block;height:8px;width:{{ progress }};background:var(--primary-color);transition:width var(--motion-expressive-short) var(--motion-timing-enter)"></span>
+            </div>
+            <p style="font:var(--font-text3-normal);color:var(--secondary-text-color);margin:0">{{ progressNote }}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasSuggestions }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:var(--space-12);flex-wrap:wrap;margin-bottom:var(--space-4)">
+              <h2 style="font:var(--font-h2-bold);letter-spacing:var(--letter-spacing-h2-bold)">טיוטת פרוטוקול מוצעת</h2>
+              <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text2-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ approvedLabel }}</span>
+            </div>
+            <p style="font:var(--font-text2-normal);color:var(--secondary-text-color);margin:0 0 var(--space-20);max-width:76ch">כל סעיף מוצע נגזר מקטעי תמלול ודורש אישור נפרד. עריכת נוסח חופשית ואינה דורשת נימוק — הנימוק נדרש רק באישור הפרוטוקול כולו.</p>
+
+            <div style="display:flex;flex-direction:column;gap:var(--space-12)">
+              <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="4">
+                <article style="background:var(--primary-background-color);border:1px solid {{ sg.border }};border-radius:var(--border-radius-8);padding:var(--space-16);display:flex;gap:var(--space-16)">
+                  <div dir="ltr" style="unicode-bidi:isolate;width:32px;flex:none;font:var(--font-h3-bold);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ sg.num }}</div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-8)">
+                    <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                      <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ sg.origin }}</span>
+                      <sc-if value="{{ sg.approved }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:var(--positive-color-selected);color:#0b3d24;font:var(--font-text3-normal)">אושר</span>
+                      </sc-if>
+                      <sc-if value="{{ sg.edited }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:2px;padding:0 var(--space-4);line-height:14px;background:var(--primary-selected-color);color:var(--primary-text-color);font:var(--font-text3-normal)">נוסח נערך</span>
+                      </sc-if>
+                    </div>
+
+                    <sc-if value="{{ sg.editing }}" hint-placeholder-val="{{ false }}">
+                      <input type="text" value="{{ sg.text }}" onChange="{{ sg.onEdit }}" style="width:100%;background:var(--secondary-background-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:32px;min-height:32px;box-sizing:border-box;padding-block:var(--space-8);padding-inline:var(--space-8) var(--space-4);font:var(--font-text2-normal);color:var(--primary-text-color);transition:border-color var(--motion-productive-medium) ease-in" style-hover="border-color:var(--primary-text-color)" style-focus="border-color:var(--primary-color)">
+                    </sc-if>
+                    <sc-if value="{{ sg.reading }}" hint-placeholder-val="{{ true }}">
+                      <p style="margin:0;font:var(--font-text1-normal);line-height:26px;max-width:72ch;text-wrap:pretty">{{ sg.text }}</p>
+                    </sc-if>
+
+                    <div style="display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap">
+                      <sc-if value="{{ sg.canApprove }}" hint-placeholder-val="{{ true }}">
+                        <button type="button" onClick="{{ sg.onApprove }}" style="background:transparent;color:var(--positive-color);border:1px solid var(--positive-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--positive-color-selected)">אישור הסעיף</button>
+                      </sc-if>
+                      <button type="button" onClick="{{ sg.onToggleEdit }}" style="background:transparent;color:var(--primary-text-color);border:1px solid var(--ui-border-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--primary-background-hover-color)">{{ sg.editLabel }}</button>
+                      <sc-if value="{{ sg.hasVote }}" hint-placeholder-val="{{ false }}">
+                        <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ sg.voteLine }}</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </article>
+              </sc-for>
+            </div>
+
+            <div style="margin-top:var(--space-20);display:flex;align-items:center;gap:var(--space-12);flex-wrap:wrap">
+              <a href="MeshekOS%20Meetings.dc.html" style="background:{{ finishBg }};color:{{ finishFg }};border:0;border-radius:var(--border-radius-small);height:32px;line-height:24px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;pointer-events:{{ finishEvents }}" style-hover="text-decoration:none">מעבר לפרוטוקול</a>
+              <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ finishHint }}</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940}}">
+const MEMBERS = [
+  {name:"איתי ברק",  initials:"אב", bg:"var(--color-navy)",        role:"יושב ראש"},
+  {name:"יעל לביא",  initials:"יל", bg:"var(--color-dark-red)",    role:"מנהלת הקהילה"},
+  {name:"מיכל רז",   initials:"מר", bg:"var(--color-dark_purple)", role:"גזברות"},
+  {name:"נועה שחר",  initials:"נש", bg:"var(--color-grass_green)", role:"חינוך"},
+  {name:"דוד אלון",  initials:"דא", bg:"var(--color-dark-blue)",   role:"תשתיות"},
+  {name:"רותי כספי", initials:"רכ", bg:"var(--color-berry)",       role:"תרבות"},
+  {name:"עמית שדה",  initials:"עש", bg:"var(--color-teal)",        role:"ביקורת"}
+];
+const SEATS = 9;
+
+const AGENDA = [
+  {title:"תחזוקת מקלטים — המשך דיון", presenter:"דוד אלון", allot:20},
+  {title:"תעריפי שימוש באולם", presenter:"רותי כספי", allot:15},
+  {title:"אישור פרוטוקול 12/2026", presenter:"איתי ברק", allot:5}
+];
+
+// [speaker, at, [[text, uncertain?], ...]]
+const SCRIPT = [
+  ["איתי ברק", "20:02", [["אני פותח את הישיבה. נוכחים חמישה חברים, ואנחנו מתחילים בסעיף תחזוקת המקלטים.", 0]]],
+  ["דוד אלון", "20:04", [["האומדן שקיבלנו מהמהנדס עומד על ", 0], ["ארבעים ושתיים אלף", 1], [" שקלים, אבל הוא לא כולל את מערכת האוורור.", 0]]],
+  ["מיכל רז", "20:06", [["הסכום הזה מעל תקרת הסמכות של הוועדה. צריך להעביר את זה להנהלה.", 0]]],
+  ["דוד אלון", "20:07", [["הוועדה כבר דנה בזה ב", 0], ["מרץ", 1], [", אז אין טעם לחזור לדיון מלא.", 0]]],
+  ["יעל לביא", "20:09", [["אני מציעה שנאשר את האומדן בכפוף להשלמת נתון האוורור, ונרשום את זה כתלוי בהחלטה פתוחה.", 0]]],
+  ["רותי כספי", "20:11", [["בעניין התעריפים — הם פגי תוקף מסוף 2025 ואף אחד לא חידש אותם.", 0]]],
+  ["איתי ברק", "20:13", [["נעבור להצבעה על ההצעה של יעל.", 0]]]
+];
+
+const SUGGESTIONS = [
+  {num:"1", origin:"נגזר מקטעים 20:02", text:"היושב ראש פתח את הישיבה ואישר את המניין: נכחו חמישה חברים מתוך תשעה."},
+  {num:"2", origin:"נגזר מקטעים 20:04–20:07", text:"הוצג אומדן מהנדס לתחזוקת המקלטים בסך ₪42,000, שאינו כולל את מערכת האוורור."},
+  {num:"3", origin:"נגזר מקטעים 20:06, 20:09", text:"הוחלט לאשר את האומדן בכפוף להשלמת נתון האוורור, ולסמן את הפריט כתלוי בהחלטה פתוחה.", vote:"בעד: איתי ברק, יעל לביא, מיכל רז, רותי כספי · נגד: דוד אלון"},
+  {num:"4", origin:"נגזר מקטעים 20:11", text:"נרשם כי תעריפי השימוש באולם פגי תוקף מסוף 2025 וטרם חודשו."}
+];
+
+const VOTE_OPTS = [
+  {key:"for",     short:"בעד", title:"בעד",  color:"var(--positive-color)", sel:"var(--positive-color-selected)"},
+  {key:"against", short:"נגד", title:"נגד",  color:"var(--negative-color)", sel:"var(--negative-color-selected)"},
+  {key:"abstain", short:"נמנע", title:"נמנע", color:"var(--secondary-text-color)", sel:"var(--ui-background-color)"}
+];
+
+class Component extends DCLogic {
+  state = {
+    mode:"live", consented:false, recording:false, revealed:0, elapsed:0,
+    refused:{"עמית שדה":true}, present:{"איתי ברק":true,"יעל לביא":true,"מיכל רז":true,"נועה שחר":true,"דוד אלון":true},
+    current:0, bookmarks:[], votes:{},
+    upload:"none", progress:0,
+    approved:{}, editing:{}, edited:{}, texts:{}
+  };
+
+  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._up); }
+
+  startTicking() {
+    clearInterval(this._tick);
+    this._tick = setInterval(() => {
+      this.setState(s => {
+        if (!s.recording) return null;
+        const next = s.revealed < SCRIPT.length ? s.revealed + 1 : s.revealed;
+        return {elapsed: s.elapsed + 2, revealed: next};
+      });
+    }, 2000);
+  }
+
+  clock(sec) {
+    const m = Math.floor(sec / 60), r = sec % 60;
+    return String(m).padStart(2, "0") + ":" + String(r).padStart(2, "0");
+  }
+
+  renderVals() {
+    const s = this.state;
+    const live = s.mode === "live";
+    const presentList = MEMBERS.filter(m => s.present[m.name]);
+    const quorumOk = presentList.length > SEATS / 2;
+    const segs = SCRIPT.slice(0, s.revealed);
+
+    const votes = s.votes[s.current] || {};
+    const counts = {for:0, against:0, abstain:0};
+    Object.keys(votes).forEach(k => { if (counts[votes[k]] !== undefined) counts[votes[k]]++; });
+
+    const approvedCount = SUGGESTIONS.filter(x => s.approved[x.num]).length;
+    const allApproved = approvedCount === SUGGESTIONS.length;
+
+    return {
+      modes: [
+        {label:"בזמן אמת", pressed: live, bg: live ? "var(--primary-selected-color)" : "transparent",
+         font: live ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
+         onPick: () => this.setState({mode:"live"})},
+        {label:"אחרי הישיבה", pressed: !live, bg: !live ? "var(--primary-selected-color)" : "transparent",
+         font: !live ? "var(--font-text2-medium)" : "var(--font-text2-normal)",
+         onPick: () => this.setState({mode:"post"})}
+      ],
+      isLive: live,
+      isPost: !live,
+
+      recording: s.recording,
+      clock: this.clock(s.elapsed),
+      headerNote: live
+        ? (s.consented ? "האישור נרשם בשם איתי ברק" : "ההקלטה ממתינה לאישור")
+        : "העלאה בדיעבד נרשמת עם מועד ההעלאה",
+
+      needsConsent: live && !s.consented,
+      consented: live && s.consented,
+      onConsent: () => { this.setState({consented:true, recording:true, revealed:1}); this.startTicking(); },
+      refusalNote: Object.keys(s.refused).length
+        ? Object.keys(s.refused).length + " חברים סימנו סירוב — הם יתומללו והסימון יישמר ביומן הביקורת"
+        : "אין סירובים",
+
+      members: MEMBERS.map(m => ({
+        name: m.name, initials: m.initials, bg: m.bg, roleLabel: m.role,
+        refused: !!s.refused[m.name],
+        present: !!s.present[m.name],
+        onToggleRefuse: () => this.setState(st => {
+          const n = {...st.refused};
+          if (n[m.name]) delete n[m.name]; else n[m.name] = true;
+          return {refused:n};
+        }),
+        onTogglePresent: () => this.setState(st => {
+          const n = {...st.present};
+          if (n[m.name]) delete n[m.name]; else n[m.name] = true;
+          return {present:n};
+        })
+      })),
+
+      quorumLabel: presentList.length + "/" + SEATS,
+      quorumState: quorumOk ? "מניין תקין" : "אין מניין",
+      quorumBg: quorumOk ? "var(--positive-color-selected)" : "var(--negative-color-selected)",
+      quorumFg: quorumOk ? "#0b3d24" : "#7a1424",
+
+      agenda: AGENDA.map((a, i) => {
+        const cur = i === s.current;
+        const spent = cur ? Math.floor(s.elapsed / 60) : (i < s.current ? a.allot : 0);
+        const over = spent > a.allot;
+        return {
+          num: String(i + 1), title: a.title, presenter: a.presenter,
+          current: cur ? "true" : null,
+          bg: cur ? "var(--primary-highlighted-color)" : "var(--primary-background-color)",
+          border: cur ? "var(--primary-color)" : "var(--layout-border-color)",
+          timeLabel: spent + "/" + a.allot + " ד׳",
+          timeBg: over ? "var(--negative-color-selected)" : "var(--ui-background-color)",
+          timeFg: over ? "#7a1424" : "var(--secondary-text-color)",
+          onPick: () => this.setState({current: i})
+        };
+      }),
+
+      segments: segs.map(row => {
+        const who = MEMBERS.find(m => m.name === row[0]) || {initials:"—", bg:"var(--color-american_gray)"};
+        return {
+          at: row[1], speaker: row[0], initials: who.initials, bg: who.bg,
+          refused: !!s.refused[row[0]],
+          parts: row[2].map(p => ({
+            text: p[0],
+            style: p[1]
+              ? "text-decoration:underline dashed var(--color-working_orange);text-underline-offset:4px"
+              : ""
+          }))
+        };
+      }),
+      awaitingSpeech: s.recording && s.revealed >= SCRIPT.length,
+
+      voters: presentList.map(m => ({
+        name: m.name,
+        options: VOTE_OPTS.map(o => {
+          const picked = votes[m.name] === o.key;
+          return {
+            short: o.short, title: o.title, pressed: picked,
+            bg: picked ? o.sel : "transparent",
+            fg: picked ? o.color : "var(--secondary-text-color)",
+            border: picked ? o.color : "var(--ui-border-color)",
+            onPick: () => this.setState(st => {
+              const cur = {...(st.votes[st.current] || {})};
+              if (cur[m.name] === o.key) delete cur[m.name]; else cur[m.name] = o.key;
+              return {votes: {...st.votes, [st.current]: cur}};
+            })
+          };
+        })
+      })),
+      tally: counts.for + "–" + counts.against + (counts.abstain ? " (" + counts.abstain + " נמנעו)" : ""),
+      tallyNote: Object.keys(votes).length ? "נרשם בשמות" : "טרם הוצבע",
+
+      bookmarks: s.bookmarks,
+      hasBookmarks: s.bookmarks.length > 0,
+      noBookmarks: s.bookmarks.length === 0,
+      onBookmark: () => this.setState(st => ({
+        bookmarks: st.bookmarks.concat([{at: this.clock(st.elapsed), label: "סעיף " + (st.current + 1)}])
+      })),
+
+      recording_: s.recording,
+      recordLabel: s.recording ? "השהיית הקלטה" : "המשך הקלטה",
+      recordBg: s.recording ? "transparent" : "var(--negative-color)",
+      recordFg: s.recording ? "var(--primary-text-color)" : "var(--fixed-light-color)",
+      recordBorder: s.recording ? "var(--ui-border-color)" : "var(--negative-color)",
+      onToggleRecord: () => {
+        const on = !this.state.recording;
+        this.setState({recording:on});
+        if (on) this.startTicking(); else clearInterval(this._tick);
+      },
+      liveHint: s.recording ? "ההשהיה נרשמת ביומן הביקורת" : "ההקלטה מושהית",
+      onFinish: () => this.setState({mode:"post", upload:"done", recording:false}),
+
+      noUpload: s.upload === "none",
+      processing: s.upload === "processing",
+      hasSuggestions: s.upload === "done",
+      progress: s.progress + "%",
+      progressNote: "מזהה דוברים ומחלק לפי סעיפי סדר היום · " + s.progress + "%",
+      onUpload: () => {
+        this.setState({upload:"processing", progress:0});
+        clearInterval(this._up);
+        this._up = setInterval(() => {
+          this.setState(st => {
+            const p = st.progress + 20;
+            if (p >= 100) { clearInterval(this._up); return {progress:100, upload:"done"}; }
+            return {progress:p};
+          });
+        }, 420);
+      },
+
+      approvedLabel: approvedCount + " מתוך " + SUGGESTIONS.length + " סעיפים אושרו",
+      suggestions: SUGGESTIONS.map(x => {
+        const isApproved = !!s.approved[x.num];
+        const isEditing = !!s.editing[x.num];
+        return {
+          num: x.num, origin: x.origin,
+          text: s.texts[x.num] !== undefined ? s.texts[x.num] : x.text,
+          approved: isApproved,
+          edited: !!s.edited[x.num],
+          editing: isEditing,
+          reading: !isEditing,
+          canApprove: !isApproved,
+          border: isApproved ? "var(--positive-color)" : "var(--layout-border-color)",
+          editLabel: isEditing ? "סיום עריכה" : "עריכת נוסח",
+          hasVote: !!x.vote,
+          voteLine: x.vote || "",
+          onApprove: () => this.setState(st => ({approved: {...st.approved, [x.num]: true}, editing: {...st.editing, [x.num]: false}})),
+          onToggleEdit: () => this.setState(st => ({editing: {...st.editing, [x.num]: !st.editing[x.num]}})),
+          onEdit: e => this.setState(st => ({
+            texts: {...st.texts, [x.num]: e.target.value},
+            edited: {...st.edited, [x.num]: true}
+          }))
+        };
+      }),
+      finishBg: allApproved ? "var(--primary-color)" : "var(--disabled-background-color)",
+      finishFg: allApproved ? "var(--text-color-on-primary)" : "var(--disabled-text-color)",
+      finishEvents: allApproved ? "auto" : "none",
+      finishHint: allApproved
+        ? "הטיוטה תיפתח בישיבה כפרוטוקול לאישור, שם נדרש נימוק"
+        : "יש לאשר כל סעיף לפני יצירת הטיוטה"
+    };
+  }
+}
+</script>
+</body>
+</html>
