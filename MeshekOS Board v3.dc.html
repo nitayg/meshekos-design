@@ -165,22 +165,22 @@ input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color
                 <sc-if value="{{ g.expanded }}" hint-placeholder-val="{{ true }}">
                   <div>
                     <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--layout-border-color);font:var(--font-text2-normal);color:var(--secondary-text-color)">
-                      <div style="width:6px;flex:none"></div>
-                      <div style="width:40px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="flex:1;min-width:240px;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">פריט</div>
-                      <div style="width:130px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">נרשם בידי</div>
-                      <div style="width:190px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב אי-ודאות</div>
-                      <div style="width:210px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">השדה שבמחלוקת</div>
-                      <div style="width:100px;flex:none;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">הוזן</div>
-                      <div style="width:170px;flex:none;padding:var(--space-8) var(--space-12);border-inline:1px solid var(--layout-border-color);text-align:center">הכרעה</div>
+                      <div style="width:6px;flex:none;box-sizing:border-box"></div>
+                      <div style="width:40px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="flex:1;min-width:240px;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">פריט</div>
+                      <div style="width:130px;flex:none;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:start">נרשם בידי</div>
+                      <div style="width:190px;flex:none;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">מצב אי-ודאות</div>
+                      <div style="width:210px;flex:none;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color)">השדה שבמחלוקת</div>
+                      <div style="width:100px;flex:none;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline-start:1px solid var(--layout-border-color);text-align:center">הוזן</div>
+                      <div style="width:170px;flex:none;box-sizing:border-box;padding:var(--space-8) var(--space-12);border-inline:1px solid var(--layout-border-color);text-align:center">הכרעה</div>
                     </div>
 
                     <sc-for list="{{ g.items }}" as="item" hint-placeholder-count="3">
                       <div>
                         <div style="display:flex;align-items:stretch;min-height:36px;border-bottom:1px solid var(--layout-border-color)" style-hover="background:var(--allgrey-background-color)">
-                          <div style="width:6px;flex:none;background:{{ item.groupColor }}"></div>
+                          <div style="width:6px;flex:none;box-sizing:border-box;background:{{ item.groupColor }}"></div>
 
-                          <div style="width:40px;flex:none;display:grid;place-items:center;border-inline-start:1px solid var(--layout-border-color)">
+                          <div style="width:40px;flex:none;box-sizing:border-box;display:grid;place-items:center;border-inline-start:1px solid var(--layout-border-color)">
                             <label style="position:relative;display:flex;align-items:center;width:fit-content;cursor:pointer">
                               <input type="checkbox" aria-label="בחירת פריט" checked="{{ item.selected }}" onChange="{{ item.onSelect }}" style="position:absolute;width:16px;height:16px;margin:0;opacity:0;cursor:pointer">
                               <span aria-hidden="true" style="height:16px;width:16px;box-sizing:border-box;flex:none;border:1px solid {{ item.boxBorder }};border-radius:2px;background:{{ item.boxBg }};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform var(--motion-productive-short) var(--motion-timing-enter)">
@@ -189,26 +189,26 @@ input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color
                             </label>
                           </div>
 
-                          <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-8)">
+                          <div style="flex:1;min-width:240px;box-sizing:border-box;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-8)">
                             <a href="MeshekOS%20Review%20Split.dc.html" style="font:var(--font-text2-normal);color:var(--primary-text-color);text-decoration:none" style-hover="color:var(--primary-color);text-decoration:underline">{{ item.title }}</a>
                             <span dir="ltr" style="unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-family:ui-monospace,monospace">{{ item.ref }}</span>
                           </div>
 
-                          <div style="width:130px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
+                          <div style="width:130px;flex:none;box-sizing:border-box;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:flex-start;gap:var(--space-4)">
                             <span style="height:20px;width:20px;box-sizing:border-box;flex:none;position:relative;border:1px solid var(--layout-border-color);border-radius:50%;overflow:hidden;display:flex;justify-content:center;align-items:center;background:{{ item.byColor }};color:var(--text-color-on-primary);font-family:var(--font-family);font-weight:400;font-size:12px;line-height:16px;letter-spacing:-0.5px">{{ item.initials }}</span>
                             <span style="font:var(--font-text3-normal);color:var(--secondary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ item.by }}</span>
                           </div>
 
-                          <div style="width:190px;flex:none;background:{{ item.catBg }};color:{{ item.catFg }};display:grid;place-items:center;text-align:center;font:var(--font-text2-normal);padding:var(--space-4)">{{ item.category }}</div>
+                          <div style="width:190px;flex:none;box-sizing:border-box;background:{{ item.catBg }};color:{{ item.catFg }};border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;text-align:center;font:var(--font-text2-normal);padding:var(--space-4) var(--space-12)">{{ item.category }}</div>
 
-                          <div style="width:210px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-4);white-space:nowrap;overflow:hidden">
+                          <div style="width:210px;flex:none;box-sizing:border-box;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center;gap:var(--space-4);white-space:nowrap;overflow:hidden">
                             <span style="font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ item.fieldLabel }}</span>
                             <span style="font:var(--font-text2-normal);text-decoration:underline dashed var(--color-wolf_gray);text-underline-offset:3px">{{ item.fieldValue }}</span>
                           </div>
 
-                          <div dir="ltr" style="width:100px;flex:none;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ item.date }}</div>
+                          <div dir="ltr" style="width:100px;flex:none;box-sizing:border-box;padding:var(--space-4) var(--space-12);border-inline-end:1px solid var(--layout-border-color);display:grid;place-items:center;unicode-bidi:isolate;font:var(--font-text3-normal);color:var(--secondary-text-color);font-variant-numeric:tabular-nums">{{ item.date }}</div>
 
-                          <div style="width:170px;flex:none;padding:var(--space-4) var(--space-8);border-inline:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
+                          <div style="width:170px;flex:none;box-sizing:border-box;padding:var(--space-4) var(--space-8);border-inline:1px solid var(--layout-border-color);display:flex;align-items:center;justify-content:center;gap:var(--space-4)">
                             <sc-if value="{{ item.showActions }}" hint-placeholder-val="{{ true }}">
                               <span style="display:flex;gap:var(--space-4)">
                                 <button type="button" onClick="{{ item.onApprove }}" style="background:transparent;color:var(--positive-color);border:1px solid var(--positive-color);border-radius:var(--border-radius-small);height:24px;line-height:21px;padding:var(--space-4) var(--space-8);font:var(--font-text2-normal);display:inline-flex;align-items:center;cursor:pointer" style-hover="background:var(--positive-color-selected)">אישור</button>
@@ -266,32 +266,32 @@ input[type="checkbox"]:focus:checked + span{background:var(--primary-hover-color
                     </sc-for>
 
                     <div style="display:flex;align-items:stretch;min-height:36px;border-bottom:1px solid var(--layout-border-color)">
-                      <div style="width:6px;flex:none;background:{{ g.color }}"></div>
-                      <div style="width:40px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center">
+                      <div style="width:6px;flex:none;box-sizing:border-box;background:{{ g.color }}"></div>
+                      <div style="width:40px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="flex:1;min-width:240px;box-sizing:border-box;padding:var(--space-4) var(--space-12);border-inline-start:1px solid var(--layout-border-color);display:flex;align-items:center">
                         <a href="MeshekOS%20Governed%20Form.dc.html" style="background:transparent;color:var(--secondary-text-color);font:var(--font-text2-normal);text-decoration:none;padding:0" style-hover="color:var(--primary-color);text-decoration:none">+ הוספת פריט</a>
                       </div>
-                      <div style="width:130px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="width:190px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="width:210px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="width:100px;flex:none;border-inline-start:1px solid var(--layout-border-color)"></div>
-                      <div style="width:170px;flex:none;border-inline:1px solid var(--layout-border-color)"></div>
+                      <div style="width:130px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:190px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:210px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:100px;flex:none;box-sizing:border-box;border-inline-start:1px solid var(--layout-border-color)"></div>
+                      <div style="width:170px;flex:none;box-sizing:border-box;border-inline:1px solid var(--layout-border-color)"></div>
                     </div>
 
                     <div style="display:flex;align-items:stretch;min-height:36px">
                       <div style="width:46px;flex:none"></div>
-                      <div style="flex:1;min-width:240px;padding:var(--space-4) var(--space-12);display:flex;align-items:center;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ g.summaryLabel }}</div>
-                      <div style="width:130px;flex:none"></div>
-                      <div style="width:190px;flex:none;padding:var(--space-8) 0;display:flex;align-items:center">
+                      <div style="flex:1;min-width:240px;box-sizing:border-box;padding:var(--space-4) var(--space-12);display:flex;align-items:center;font:var(--font-text3-normal);color:var(--secondary-text-color)">{{ g.summaryLabel }}</div>
+                      <div style="width:130px;flex:none;box-sizing:border-box"></div>
+                      <div style="width:190px;flex:none;box-sizing:border-box;padding:var(--space-8) 0;display:flex;align-items:center">
                         <span style="display:flex;width:100%;height:20px;border-radius:var(--border-radius-4);overflow:hidden">
                           <sc-for list="{{ g.battery }}" as="seg" hint-placeholder-count="3">
                             <span title="{{ seg.label }}" style="width:{{ seg.width }};background:{{ seg.color }}"></span>
                           </sc-for>
                         </span>
                       </div>
-                      <div style="width:210px;flex:none"></div>
-                      <div style="width:100px;flex:none"></div>
-                      <div style="width:170px;flex:none"></div>
+                      <div style="width:210px;flex:none;box-sizing:border-box"></div>
+                      <div style="width:100px;flex:none;box-sizing:border-box"></div>
+                      <div style="width:170px;flex:none;box-sizing:border-box"></div>
                     </div>
                   </div>
                 </sc-if>
